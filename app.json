@@ -1,0 +1,87 @@
+{
+  "expo": {
+    "name": "Cargo",
+    "slug": "dms-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dms.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "This app needs access to your camera to take photos of the shipment.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save photos of the shipment."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.dmsapp",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to take photos of the shipment.",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone to record audio of the shipment.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to upload images of the shipment."
+        }
+      ]
+    ],
+    "fonts": [
+      {
+        "asset": "./assets/fonts/SuisseIntl-Regular.ttf"
+      },
+      {
+        "asset": "./assets/fonts/SuisseIntl-Medium.ttf"
+      },
+      {
+        "asset": "./assets/fonts/SuisseIntl-Bold.ttf"
+      }
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "29d36892-5218-4dd6-8d17-359edfc5971a"
+      }
+    }
+  }
+}

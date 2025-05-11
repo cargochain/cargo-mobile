@@ -1,0 +1,91 @@
+{
+    "common": {
+        "home": "Início",
+        "shipments": "Envios",
+        "clients": "Clientes",
+        "explore": "Explorar",
+        "settings": "Configurações",
+        "language": "Idioma",
+        "save": "Salvar",
+        "cancel": "Cancelar",
+        "delete": "Excluir",
+        "edit": "Editar",
+        "search": "Pesquisar",
+        "error": "Erro",
+        "support": "Ajuda"
+    },
+    "welcome": {
+        "title": "Bem-vindo ao DMS",
+        "subtitle": "Sua solução de gestão logística",
+        "login": "Entrar",
+        "register": "Registrar"
+    },
+    "auth": {
+        "login": "Digite seu NIF e PIN para entrar",
+        "register": "Registrar",
+        "nif": "NIF",
+        "pin": "PIN",
+        "email": "E-mail",
+        "password": "Senha",
+        "confirmPassword": "Confirmar Senha",
+        "name": "Nome",
+        "noAccount": "Não tem uma conta?",
+        "haveAccount": "Já tem uma conta?",
+        "loggingIn": "Entrando...",
+        "registering": "Registrando...",
+        "createAccount": "Criar conta",
+        "errors": {
+            "fillAllFields": "Por favor, preencha todos os campos",
+            "invalidNif": "NIF deve ter 9 dígitos",
+            "invalidPin": "PIN deve ter 4 dígitos",
+            "passwordsDontMatch": "As senhas não coincidem",
+            "invalidCredentials": "NIF ou PIN inválidos",
+            "registrationFailed": "Falha no registro. Por favor, tente novamente."
+        },
+        "button": {
+            "login": "Entrar"
+        }
+    },
+    "home": {
+        "welcome": "Bem-vindo ao DMS",
+        "dashboard": "Painel",
+        "recentActivity": "Atividade Recente"
+    },
+    "shipments": {
+        "title": "Envios",
+        "description": "Visualize e gerencie seus envios aqui.",
+        "activeShipments": "Envios Ativos",
+        "activeShipmentsDesc": "Seus envios ativos aparecerão aqui.",
+        "shipmentHistory": "Histórico de Envios",
+        "shipmentHistoryDesc": "Visualize seus envios anteriores e seus status.",
+        "trackingNumber": "Número de Rastreamento",
+        "status": "Status",
+        "destination": "Destino",
+        "origin": "Origem"
+    },
+    "clients": {
+        "title": "Clientes",
+        "description": "Gerencie as informações e relacionamentos com seus clientes.",
+        "activeClients": "Clientes Ativos",
+        "activeClientsDesc": "Visualize e gerencie seus clientes ativos.",
+        "clientHistory": "Histórico de Clientes",
+        "clientHistoryDesc": "Acesse dados históricos de clientes e interações anteriores.",
+        "name": "Nome",
+        "email": "E-mail",
+        "phone": "Telefone",
+        "address": "Endereço"
+    },
+    "settings": {
+        "title": "Configurações",
+        "language": "Idioma",
+        "theme": "Tema",
+        "notifications": "Notificações",
+        "account": "Conta",
+        "about": "Sobre",
+        "logout": "Sair",
+        "logoutConfirmTitle": "Sair",
+        "logoutConfirmMessage": "Tem certeza que deseja sair?",
+        "logoutError": "Falha ao sair. Por favor, tente novamente.",
+        "selectLanguage": "Selecionar Idioma"
+    }
+}

@@ -1,0 +1,86 @@
+{
+    "common": {
+        "home": "Home",
+        "shipments": "Shipments",
+        "clients": "Clients",
+        "explore": "Explore",
+        "settings": "Settings",
+        "language": "Language",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "search": "Search",
+        "error": "Error",
+        "support": "Support"
+    },
+    "welcome": {
+        "title": "Welcome to DMS",
+        "subtitle": "Your logistics management solution",
+        "login": "Login",
+        "register": "Register"
+    },
+    "auth": {
+        "login": "Login",
+        "register": "Register",
+        "nif": "NIF",
+        "pin": "PIN",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "name": "Name",
+        "noAccount": "Don't have an account?",
+        "haveAccount": "Already have an account?",
+        "loggingIn": "Logging in...",
+        "registering": "Registering...",
+        "errors": {
+            "fillAllFields": "Please fill in all fields",
+            "invalidNif": "NIF must be 9 digits",
+            "invalidPin": "PIN must be 4 digits",
+            "passwordsDontMatch": "Passwords don't match",
+            "invalidCredentials": "Invalid NIF or PIN",
+            "registrationFailed": "Registration failed. Please try again."
+        }
+    },
+    "home": {
+        "welcome": "Welcome to DMS",
+        "dashboard": "Dashboard",
+        "recentActivity": "Recent Activity"
+    },
+    "shipments": {
+        "title": "Shipments",
+        "description": "View and manage your shipments here.",
+        "activeShipments": "Active Shipments",
+        "activeShipmentsDesc": "Your active shipments will appear here.",
+        "shipmentHistory": "Shipment History",
+        "shipmentHistoryDesc": "View your past shipments and their status.",
+        "trackingNumber": "Tracking Number",
+        "status": "Status",
+        "destination": "Destination",
+        "origin": "Origin"
+    },
+    "clients": {
+        "title": "Clients",
+        "description": "Manage your client information and relationships.",
+        "activeClients": "Active Clients",
+        "activeClientsDesc": "View and manage your active clients.",
+        "clientHistory": "Client History",
+        "clientHistoryDesc": "Access historical client data and past interactions.",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address"
+    },
+    "settings": {
+        "title": "Settings",
+        "language": "Language",
+        "theme": "Theme",
+        "notifications": "Notifications",
+        "account": "Account",
+        "about": "About",
+        "logout": "Logout",
+        "logoutConfirmTitle": "Logout",
+        "logoutConfirmMessage": "Are you sure you want to logout?",
+        "logoutError": "Failed to logout. Please try again."
+    }
+}

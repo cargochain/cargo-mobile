@@ -1,0 +1,80 @@
+{
+    "common": {
+        "home": "Inicio",
+        "shipments": "Envíos",
+        "clients": "Clientes",
+        "explore": "Explorar",
+        "settings": "Configuración",
+        "language": "Idioma",
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "search": "Buscar",
+        "error": "Error",
+        "support": "Soporte"
+    },
+    "auth": {
+        "login": "Iniciar Sesión",
+        "register": "Registrarse",
+        "nif": "NIF",
+        "pin": "PIN",
+        "email": "Correo Electrónico",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar Contraseña",
+        "name": "Nombre",
+        "noAccount": "¿No tienes una cuenta?",
+        "haveAccount": "¿Ya tienes una cuenta?",
+        "loggingIn": "Iniciando sesión...",
+        "registering": "Registrando...",
+        "errors": {
+            "fillAllFields": "Por favor, complete todos los campos",
+            "invalidNif": "El NIF debe tener 9 dígitos",
+            "invalidPin": "El PIN debe tener 4 dígitos",
+            "passwordsDontMatch": "Las contraseñas no coinciden",
+            "invalidCredentials": "NIF o PIN inválidos",
+            "registrationFailed": "Error en el registro. Por favor, inténtelo de nuevo."
+        }
+    },
+    "home": {
+        "welcome": "Bienvenido a DMS",
+        "dashboard": "Panel de Control",
+        "recentActivity": "Actividad Reciente"
+    },
+    "shipments": {
+        "title": "Envíos",
+        "description": "Ver y gestionar sus envíos aquí.",
+        "activeShipments": "Envíos Activos",
+        "activeShipmentsDesc": "Sus envíos activos aparecerán aquí.",
+        "shipmentHistory": "Historial de Envíos",
+        "shipmentHistoryDesc": "Ver sus envíos anteriores y su estado.",
+        "trackingNumber": "Número de Seguimiento",
+        "status": "Estado",
+        "destination": "Destino",
+        "origin": "Origen"
+    },
+    "clients": {
+        "title": "Clientes",
+        "description": "Gestionar la información y relaciones con sus clientes.",
+        "activeClients": "Clientes Activos",
+        "activeClientsDesc": "Ver y gestionar sus clientes activos.",
+        "clientHistory": "Historial de Clientes",
+        "clientHistoryDesc": "Acceder a datos históricos de clientes e interacciones anteriores.",
+        "name": "Nombre",
+        "email": "Correo Electrónico",
+        "phone": "Teléfono",
+        "address": "Dirección"
+    },
+    "settings": {
+        "title": "Configuración",
+        "language": "Idioma",
+        "theme": "Tema",
+        "notifications": "Notificaciones",
+        "account": "Cuenta",
+        "about": "Acerca de",
+        "logout": "Cerrar Sesión",
+        "logoutConfirmTitle": "Cerrar Sesión",
+        "logoutConfirmMessage": "¿Está seguro de que desea cerrar sesión?",
+        "logoutError": "Error al cerrar sesión. Por favor, inténtelo de nuevo."
+    }
+}
