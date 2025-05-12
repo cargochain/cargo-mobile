@@ -78,6 +78,7 @@ export type Mutation = {
   signUp: UserSignUpResponse;
   startDelivery: Shipment;
   uploadShipmentFiles: Shipment;
+  userUploadShipmentFiles: Shipment;
 };
 
 
@@ -118,6 +119,11 @@ export type MutationStartDeliveryArgs = {
 
 export type MutationUploadShipmentFilesArgs = {
   input: UploadShipmentFilesInput;
+};
+
+
+export type MutationUserUploadShipmentFilesArgs = {
+  input: UserUploadShipmentFilesInput;
 };
 
 export type Query = {
@@ -191,6 +197,12 @@ export type User = {
   nif: Scalars['String']['output'];
 };
 
+export type UserBase64FileInput = {
+  base64: Scalars['String']['input'];
+  mimeType: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type UserSignInInput = {
   nif: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -216,6 +228,11 @@ export type UserSignUpResponse = {
   success: Scalars['Boolean']['output'];
 };
 
+export type UserUploadShipmentFilesInput = {
+  files: Array<UserBase64FileInput>;
+  shipmentId: Scalars['ID']['input'];
+};
+
 export type GetDriverShipmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -226,7 +243,7 @@ export type GetDriverShipmentQueryVariables = Exact<{
 }>;
 
 
-export type GetDriverShipmentQuery = { __typename?: 'Query', driverShipment: { __typename?: 'Shipment', id: string, trackingCode: string, status: string, company: { __typename?: 'Company', id: string, name: string, nif: string }, user: { __typename?: 'User', id: string, name: string, nif: string } } };
+export type GetDriverShipmentQuery = { __typename?: 'Query', driverShipment: { __typename?: 'Shipment', id: string, trackingCode: string, status: string, company: { __typename?: 'Company', id: string, name: string, nif: string }, user: { __typename?: 'User', id: string, name: string, nif: string }, files: Array<{ __typename?: 'File', id: string, url: string }> } };
 
 export type StartDeliveryMutationVariables = Exact<{
   shipmentId: Scalars['ID']['input'];
@@ -235,12 +252,12 @@ export type StartDeliveryMutationVariables = Exact<{
 
 export type StartDeliveryMutation = { __typename?: 'Mutation', startDelivery: { __typename?: 'Shipment', id: string } };
 
-export type UploadShipmentFilesMutationVariables = Exact<{
-  input: UploadShipmentFilesInput;
+export type UserUploadShipmentFilesMutationVariables = Exact<{
+  input: UserUploadShipmentFilesInput;
 }>;
 
 
-export type UploadShipmentFilesMutation = { __typename?: 'Mutation', uploadShipmentFiles: { __typename?: 'Shipment', id: string } };
+export type UserUploadShipmentFilesMutation = { __typename?: 'Mutation', userUploadShipmentFiles: { __typename?: 'Shipment', id: string } };
 
 export type RefreshTokenMutationVariables = Exact<{
   refreshToken: Scalars['String']['input'];
@@ -302,7 +319,7 @@ export type GetDriverShipmentsQueryHookResult = ReturnType<typeof useGetDriverSh
 export type GetDriverShipmentsLazyQueryHookResult = ReturnType<typeof useGetDriverShipmentsLazyQuery>;
 export type GetDriverShipmentsSuspenseQueryHookResult = ReturnType<typeof useGetDriverShipmentsSuspenseQuery>;
 export type GetDriverShipmentsQueryResult = Apollo.QueryResult<GetDriverShipmentsQuery, GetDriverShipmentsQueryVariables>;
-export const GetDriverShipmentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDriverShipment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"shipmentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"driverShipment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"shipmentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"shipmentId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"company"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}}]}}]}}]}}]} as unknown as DocumentNode;
+export const GetDriverShipmentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDriverShipment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"shipmentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"driverShipment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"shipmentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"shipmentId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"company"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}}]}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]} as unknown as DocumentNode;
 
 /**
  * __useGetDriverShipmentQuery__
@@ -363,33 +380,33 @@ export function useStartDeliveryMutation(baseOptions?: Apollo.MutationHookOption
 export type StartDeliveryMutationHookResult = ReturnType<typeof useStartDeliveryMutation>;
 export type StartDeliveryMutationResult = Apollo.MutationResult<StartDeliveryMutation>;
 export type StartDeliveryMutationOptions = Apollo.BaseMutationOptions<StartDeliveryMutation, StartDeliveryMutationVariables>;
-export const UploadShipmentFilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadShipmentFiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UploadShipmentFilesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadShipmentFiles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode;
-export type UploadShipmentFilesMutationFn = Apollo.MutationFunction<UploadShipmentFilesMutation, UploadShipmentFilesMutationVariables>;
+export const UserUploadShipmentFilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UserUploadShipmentFiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserUploadShipmentFilesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userUploadShipmentFiles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode;
+export type UserUploadShipmentFilesMutationFn = Apollo.MutationFunction<UserUploadShipmentFilesMutation, UserUploadShipmentFilesMutationVariables>;
 
 /**
- * __useUploadShipmentFilesMutation__
+ * __useUserUploadShipmentFilesMutation__
  *
- * To run a mutation, you first call `useUploadShipmentFilesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadShipmentFilesMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUserUploadShipmentFilesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUserUploadShipmentFilesMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [uploadShipmentFilesMutation, { data, loading, error }] = useUploadShipmentFilesMutation({
+ * const [userUploadShipmentFilesMutation, { data, loading, error }] = useUserUploadShipmentFilesMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useUploadShipmentFilesMutation(baseOptions?: Apollo.MutationHookOptions<UploadShipmentFilesMutation, UploadShipmentFilesMutationVariables>) {
+export function useUserUploadShipmentFilesMutation(baseOptions?: Apollo.MutationHookOptions<UserUploadShipmentFilesMutation, UserUploadShipmentFilesMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadShipmentFilesMutation, UploadShipmentFilesMutationVariables>(UploadShipmentFilesDocument, options);
+        return Apollo.useMutation<UserUploadShipmentFilesMutation, UserUploadShipmentFilesMutationVariables>(UserUploadShipmentFilesDocument, options);
       }
-export type UploadShipmentFilesMutationHookResult = ReturnType<typeof useUploadShipmentFilesMutation>;
-export type UploadShipmentFilesMutationResult = Apollo.MutationResult<UploadShipmentFilesMutation>;
-export type UploadShipmentFilesMutationOptions = Apollo.BaseMutationOptions<UploadShipmentFilesMutation, UploadShipmentFilesMutationVariables>;
+export type UserUploadShipmentFilesMutationHookResult = ReturnType<typeof useUserUploadShipmentFilesMutation>;
+export type UserUploadShipmentFilesMutationResult = Apollo.MutationResult<UserUploadShipmentFilesMutation>;
+export type UserUploadShipmentFilesMutationOptions = Apollo.BaseMutationOptions<UserUploadShipmentFilesMutation, UserUploadShipmentFilesMutationVariables>;
 export const RefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refreshToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refreshToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refreshToken"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"}}]}}]}}]} as unknown as DocumentNode;
 export type RefreshTokenMutationFn = Apollo.MutationFunction<RefreshTokenMutation, RefreshTokenMutationVariables>;
 

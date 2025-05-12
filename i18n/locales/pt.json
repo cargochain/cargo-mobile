@@ -12,10 +12,15 @@
         "edit": "Editar",
         "search": "Pesquisar",
         "error": "Erro",
-        "support": "Ajuda"
+        "support": "Ajuda",
+        "photos": "Fotos",
+        "gallery": "Galeria",
+        "camera": "Câmera",
+        "selectPhotos": "Selecionar Fotos",
+        "help_center": "Centro de Ajuda"
     },
     "welcome": {
-        "title": "Bem-vindo ao DMS",
+        "title": "Bem-vindo",
         "subtitle": "Sua solução de gestão logística",
         "login": "Entrar",
         "register": "Registrar"
@@ -47,21 +52,24 @@
         }
     },
     "home": {
+        "title": "Início",
         "welcome": "Bem-vindo ao DMS",
         "dashboard": "Painel",
         "recentActivity": "Atividade Recente"
     },
     "shipments": {
-        "title": "Envios",
+        "title": "Remessas",
         "description": "Visualize e gerencie seus envios aqui.",
-        "activeShipments": "Envios Ativos",
+        "activeShipments": "Remessas Ativas",
         "activeShipmentsDesc": "Seus envios ativos aparecerão aqui.",
-        "shipmentHistory": "Histórico de Envios",
+        "shipmentHistory": "Histórico de Remessas",
         "shipmentHistoryDesc": "Visualize seus envios anteriores e seus status.",
         "trackingNumber": "Número de Rastreamento",
         "status": "Status",
         "destination": "Destino",
-        "origin": "Origem"
+        "origin": "Origem",
+        "photos": "Fotos",
+        "createdAt": "Criado em"
     },
     "clients": {
         "title": "Clientes",
@@ -77,6 +85,7 @@
     },
     "settings": {
         "title": "Configurações",
+        "description": "Gerencie suas configurações de conta e preferências.",
         "language": "Idioma",
         "theme": "Tema",
         "notifications": "Notificações",
@@ -87,5 +96,15 @@
         "logoutConfirmMessage": "Tem certeza que deseja sair?",
         "logoutError": "Falha ao sair. Por favor, tente novamente.",
         "selectLanguage": "Selecionar Idioma"
+    },
+    "support": {
+        "title": "Ajuda",
+        "description": "Contate-nos para obter ajuda e suporte.",
+        "contact": "Contato",
+        "phone": "Telefone",
+        "email": "E-mail",
+        "instructions": "Instruções",
+        "instructionsDesc": "Siga as instruções para resolver seu problema.",
+        "contactWhatsApp": "Contate-nos via WhatsApp"
     }
 }

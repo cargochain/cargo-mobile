@@ -60,7 +60,8 @@ export default function RootLayout() {
     <ApolloProvider client={client}>
       <AuthProvider>
         <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          // value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          value={DefaultTheme}
         >
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

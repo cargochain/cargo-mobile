@@ -1,4 +1,4 @@
-package com.anonymous.dmsapp
+package com.cargo.mobile
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

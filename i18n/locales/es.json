@@ -12,7 +12,9 @@
         "edit": "Editar",
         "search": "Buscar",
         "error": "Error",
-        "support": "Soporte"
+        "support": "Soporte",
+        "selectPhotos": "Seleccionar Fotos",
+        "help_center": "Centro de Ayuda"
     },
     "auth": {
         "login": "Iniciar Sesión",
@@ -37,6 +39,7 @@
         }
     },
     "home": {
+        "title": "Inicio",
         "welcome": "Bienvenido a DMS",
         "dashboard": "Panel de Control",
         "recentActivity": "Actividad Reciente"
@@ -67,6 +70,7 @@
     },
     "settings": {
         "title": "Configuración",
+        "description": "Gestionar sus configuraciones de cuenta y preferencias.",
         "language": "Idioma",
         "theme": "Tema",
         "notifications": "Notificaciones",
@@ -76,5 +80,12 @@
         "logoutConfirmTitle": "Cerrar Sesión",
         "logoutConfirmMessage": "¿Está seguro de que desea cerrar sesión?",
         "logoutError": "Error al cerrar sesión. Por favor, inténtelo de nuevo."
+    },
+    "support": {
+        "title": "Soporte",
+        "description": "Contacte con nosotros para obtener ayuda y soporte.",
+        "contact": "Contacto",
+        "phone": "Teléfono",
+        "email": "Correo Electrónico"
     }
 }

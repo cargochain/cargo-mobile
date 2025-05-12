@@ -1,20 +1,23 @@
 {
   "expo": {
     "name": "Cargo",
-    "slug": "dms-app",
+    "slug": "cargo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "cargo",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dms.app",
+      "bundleIdentifier": "com.cargo.mobile",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "This app needs access to your camera to take photos of the shipment.",
-        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save photos of the shipment."
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save photos of the shipment.",
+        "LSApplicationQueriesSchemes": [
+          "whatsapp"
+        ]
       }
     },
     "android": {
@@ -22,12 +25,14 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.dmsapp",
+      "package": "com.cargo.mobile",
       "permissions": [
-        "CAMERA",
-        "RECORD_AUDIO",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -80,8 +85,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "29d36892-5218-4dd6-8d17-359edfc5971a"
+        "projectId": "a777e2a3-14a0-4950-b433-f831e271e4f9"
       }
-    }
+    },
+    "owner": "phenvrc"
   }
 }

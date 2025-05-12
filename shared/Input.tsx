@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: Colors.light.primary,
     borderRadius: 10,
     backgroundColor: Colors.light.secondary,
@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
     color: "#333",
+    fontFamily: "SuisseMedium",
   },
   focusedInput: {
     borderColor: Colors.light.primary,

@@ -28,7 +28,7 @@ type AvailableLanguages = keyof typeof resources;
 const getDeviceLanguage = (): AvailableLanguages => {
   const deviceLanguage = Localization.getLocales()[0]
     .languageCode as AvailableLanguages;
-  return resources[deviceLanguage] ? deviceLanguage : "en";
+  return resources[deviceLanguage] ? deviceLanguage : "pt";
 };
 
 // Load saved language from AsyncStorage

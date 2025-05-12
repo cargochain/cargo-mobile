@@ -36,6 +36,10 @@ const GET_DRIVER_SHIPMENT_QUERY = gql`
         name
         nif
       }
+      files {
+        id
+        url
+      }
     }
   }
 `;
@@ -223,17 +227,6 @@ export default function ShipmentDetailsScreen() {
     };
 
     const renderImages = () => {
-      if (images.length === 0) {
-        return (
-          <TouchableOpacity onPress={pickImage} style={styles.addPhotosButton}>
-            <FontAwesome6 name="images" size={18} color={Colors.light.info} />
-            <Text style={styles.addPhotosButtonText}>
-              {t("Select Photos from gallery")}
-            </Text>
-          </TouchableOpacity>
-        );
-      }
-
       return images.map((image, index) => (
         <View key={index}>
           <Image source={{ uri: image.uri }} style={styles.image} />
@@ -252,7 +245,15 @@ export default function ShipmentDetailsScreen() {
             <TouchableOpacity
               onPress={pickImage}
               style={styles.addPhotosButton}
-            />
+            >
+              <FontAwesome6 name="images" size={18} color={Colors.light.info} />
+              <Text style={styles.addPhotosButtonText}>
+                {t("common.selectPhotos")}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onClose} style={styles.addPhotosButton}>
+              <Text style={styles.addPhotosButtonText}>{t("Cancel")}</Text>
+            </TouchableOpacity>
           </View>
         );
       }
@@ -285,6 +286,8 @@ export default function ShipmentDetailsScreen() {
     );
   };
 
+  console.log(shipment.files);
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.header}>
@@ -312,11 +315,22 @@ export default function ShipmentDetailsScreen() {
               onPress={() => setIsImageSelectorModalVisible(true)}
               style={styles.addPhotosButton}
             >
-              <IconSymbol name="camera" size={24} color={Colors.light.info} />
+              <FontAwesome6 name="images" size={18} color={Colors.light.info} />
               <Text style={styles.addPhotosButtonText}>
-                {t("Select Photos")}
+                {t("common.selectPhotos")}
               </Text>
             </TouchableOpacity>
+          </View>
+          <View style={styles.photosBody}>
+            {shipment.files.map((file: any, index: number) => (
+              <View style={styles.photoItem}>
+                <Image
+                  key={index}
+                  source={{ uri: file.url }}
+                  style={styles.photoItemImage}
+                />
+              </View>
+            ))}
           </View>
         </View>
 
@@ -401,13 +415,10 @@ const styles = StyleSheet.create({
     fontFamily: "SuisseBold",
   },
   photosBody: {
-    padding: 16,
-    borderRadius: 12,
-  },
-  photosBodyText: {
-    fontSize: 14,
-    color: Colors.light.text,
-    fontFamily: "SuisseMedium",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingHorizontal: 2,
   },
   photosButton: {
     flexDirection: "row",
@@ -418,6 +429,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.light.text,
     fontFamily: "SuisseMedium",
+  },
+  photoItem: {
+    width: "32.5%", // 3 columns with some spacing
+    aspectRatio: 1, // Square images
+    marginBottom: 2,
+    overflow: "hidden",
+    borderRadius: 8,
+  },
+  photoItemImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 8,
   },
   actionButton: {
     color: Colors.light.info,
@@ -455,7 +478,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   imageSelectorModalOptions: {
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: 16,

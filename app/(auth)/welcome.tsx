@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ImageBackground,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
@@ -15,7 +9,7 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>{t("welcome.title")}</Text>
+        <Text style={styles.title}>Cargo</Text>
         <Text style={styles.subtitle}>{t("welcome.subtitle")}</Text>
 
         <View style={styles.buttonContainer}>
@@ -55,8 +49,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontFamily: "SuisseBold",
     textAlign: "center",
   },
   subtitle: {

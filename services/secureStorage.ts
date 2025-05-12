@@ -12,6 +12,7 @@ export interface UserData {
   email: string;
   name: string;
   role: string;
+  phoneNumber: string;
   // Add other user properties as needed
 }
 

@@ -1,5 +1,5 @@
 {
-  "name": "dms-app-mobile",
+  "name": "cargo",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -28,7 +28,7 @@
     "expo-blur": "~14.0.3",
     "expo-camera": "~16.0.18",
     "expo-constants": "~17.0.8",
-    "expo-dev-client": "~5.0.19",
+    "expo-dev-client": "~5.0.20",
     "expo-font": "~13.0.4",
     "expo-haptics": "~14.0.1",
     "expo-image-manipulator": "~13.0.6",

@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'dms-app'
+rootProject.name = 'Cargo'
 
 dependencyResolutionManagement {
   versionCatalogs {

@@ -30,18 +30,27 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
+        name="settings"
+        options={{
+          title: t("settings.title"),
+          tabBarIcon: ({ color }: { color: string }) => (
+            <IconSymbol size={28} name="gearshape.fill" color={color} />
+          ),
+        }}
+      />
+      {/* <Tabs.Screen
         name="index"
         options={{
-          title: t("common.home"),
+          title: t("home.title"),
           tabBarIcon: ({ color }: { color: string }) => (
             <IconSymbol size={28} name="house.fill" color={color} />
           ),
         }}
-      />
+      /> */}
       <Tabs.Screen
-        name="shipments"
+        name="index"
         options={{
-          title: t("common.shipments"),
+          title: t("shipments.title"),
           tabBarIcon: ({ color }: { color: string }) => (
             <IconSymbol size={28} name="shippingbox.fill" color={color} />
           ),
@@ -50,13 +59,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="support"
         options={{
-          title: t("common.support"),
+          title: t("support.title"),
           tabBarIcon: ({ color }: { color: string }) => (
-            <IconSymbol
-              size={28}
-              name="questionmark.circle.fill"
-              color={color}
-            />
+            <IconSymbol size={28} name="person.fill" color={color} />
           ),
         }}
       />

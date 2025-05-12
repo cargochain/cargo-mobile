@@ -1,4 +1,4 @@
-package com.anonymous.dmsapp
+package com.cargo.mobile
 
 import android.app.Application
 import android.content.res.Configuration

@@ -8,6 +8,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  Text,
 } from "react-native";
 import { Link, router } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -107,12 +108,7 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <ThemedView style={styles.content}>
-            <ThemedText
-              type="title"
-              style={[styles.title, { color: colors.text }]}
-            >
-              {t("auth.login")}
-            </ThemedText>
+            <Text style={styles.title}>{t("auth.login")}</Text>
 
             {error ? (
               <ThemedText style={[styles.errorText, { color: colors.error }]}>
@@ -231,6 +227,8 @@ const styles = StyleSheet.create({
     fontSize: 32,
     marginBottom: 20,
     textAlign: "left",
+    fontFamily: "SuisseBold",
+    color: Colors.light.primary,
   },
   inputContainer: {
     marginBottom: 20,
