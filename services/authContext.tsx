@@ -56,7 +56,6 @@ const GET_USER_QUERY = gql`
       nif
       email
       name
-      role
       phoneNumber
     }
   }

@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   Linking,
+  Platform,
 } from "react-native";
 import { useState } from "react";
 import { useRouter } from "expo-router";
@@ -85,6 +86,10 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: Colors.light.white,
+    paddingTop: Platform.select({
+      android: 40,
+      default: 0,
+    }),
   },
   container: {
     flex: 1,

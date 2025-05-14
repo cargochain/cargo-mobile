@@ -17,7 +17,8 @@
         "gallery": "Galeria",
         "camera": "Câmera",
         "selectPhotos": "Selecionar Fotos",
-        "help_center": "Centro de Ajuda"
+        "help_center": "Centro de Ajuda",
+        "back": "Voltar"
     },
     "welcome": {
         "title": "Bem-vindo",

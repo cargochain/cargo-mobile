@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   Image,
+  Platform,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -52,9 +53,9 @@ const START_DELIVERY_MUTATION = gql`
   }
 `;
 
-const USER_UPLOAD_SHIPMENT_FILES_MUTATION = gql`
-  mutation UserUploadShipmentFiles($input: UserUploadShipmentFilesInput!) {
-    userUploadShipmentFiles(input: $input) {
+const UPLOAD_SHIPMENT_BASE64_FILES_MUTATION = gql`
+  mutation UploadShipmentBase64Files($input: UploadShipmentBase64FilesInput!) {
+    uploadShipmentBase64Files(input: $input) {
       id
     }
   }
@@ -86,13 +87,15 @@ export default function ShipmentDetailsScreen() {
     }
   );
 
-  // upload shipment files mutation
-  const [userUploadShipmentFiles, { loading: uploadShipmentFilesLoading }] =
-    useMutation(USER_UPLOAD_SHIPMENT_FILES_MUTATION, {
-      refetchQueries: [
-        { query: GET_DRIVER_SHIPMENT_QUERY, variables: { shipmentId: id } },
-      ],
-    });
+  // upload shipment base64 files mutation
+  const [
+    uploadShipmentBase64Files,
+    { loading: uploadShipmentBase64FilesLoading },
+  ] = useMutation(UPLOAD_SHIPMENT_BASE64_FILES_MUTATION, {
+    refetchQueries: [
+      { query: GET_DRIVER_SHIPMENT_QUERY, variables: { shipmentId: id } },
+    ],
+  });
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -208,7 +211,7 @@ export default function ShipmentDetailsScreen() {
         );
 
         // Call the GraphQL mutation
-        await userUploadShipmentFiles({
+        await uploadShipmentBase64Files({
           variables: {
             input: {
               shipmentId: shipment.id,
@@ -300,7 +303,7 @@ export default function ShipmentDetailsScreen() {
             size={16}
             color={Colors.light.primary}
           />
-          <ThemedText type="defaultSemiBold">Voltar</ThemedText>
+          <ThemedText type="defaultSemiBold">{t("common.back")}</ThemedText>
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitleLabel}>Código de Rastreio:</Text>
@@ -323,9 +326,8 @@ export default function ShipmentDetailsScreen() {
           </View>
           <View style={styles.photosBody}>
             {shipment.files.map((file: any, index: number) => (
-              <View style={styles.photoItem}>
+              <View style={styles.photoItem} key={index}>
                 <Image
-                  key={index}
                   source={{ uri: file.url }}
                   style={styles.photoItemImage}
                 />
@@ -348,6 +350,10 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: Colors.light.white,
+    paddingTop: Platform.select({
+      android: 40,
+      default: 0,
+    }),
   },
   header: {
     padding: 20,

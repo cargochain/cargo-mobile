@@ -16,6 +16,12 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "adhoc": {
+      "distribution": "internal",
+      "ios": {
+        "buildConfiguration": "Debug"
+      }
     }
   },
   "submit": {

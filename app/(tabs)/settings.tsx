@@ -4,6 +4,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 
 import { useTranslation } from "react-i18next";
@@ -79,6 +80,10 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: Colors.light.white,
+    paddingTop: Platform.select({
+      android: 40,
+      default: 0,
+    }),
   },
   container: {
     flex: 1,

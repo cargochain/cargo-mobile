@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     textAlign: "center",
-    fontFamily: Fonts.suisse.bold,
+    fontFamily: Fonts.geist.bold,
   },
   inputContainer: {
     marginBottom: 20,
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   errorText: {
     marginBottom: 15,
     textAlign: "center",
-    fontFamily: Fonts.suisse.medium,
+    fontFamily: Fonts.geist.medium,
   },
   footer: {
     flexDirection: "row",

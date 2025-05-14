@@ -8,9 +8,15 @@ export function useFonts() {
     async function loadFonts() {
       try {
         await Font.loadAsync({
-          "SuisseIntl-Regular-WebM": require("../assets/fonts/SuisseIntl-Regular-WebM.ttf"),
-          "SuisseIntl-Medium-WebM": require("../assets/fonts/SuisseIntl-Medium-WebM.ttf"),
-          "SuisseIntl-Bold-WebM": require("../assets/fonts/SuisseIntl-Bold-WebM.ttf"),
+          "Geist-Thin": require("../assets/fonts/Geist-Thin.ttf"),
+          "Geist-ExtraLight": require("../assets/fonts/Geist-ExtraLight.ttf"),
+          "Geist-Light": require("../assets/fonts/Geist-Light.ttf"),
+          "Geist-Regular": require("../assets/fonts/Geist-Regular.ttf"),
+          "Geist-Medium": require("../assets/fonts/Geist-Medium.ttf"),
+          "Geist-SemiBold": require("../assets/fonts/Geist-SemiBold.ttf"),
+          "Geist-Bold": require("../assets/fonts/Geist-Bold.ttf"),
+          "Geist-ExtraBold": require("../assets/fonts/Geist-ExtraBold.ttf"),
+          "Geist-Black": require("../assets/fonts/Geist-Black.ttf"),
         });
         setFontsLoaded(true);
         console.log("Fonts loaded");

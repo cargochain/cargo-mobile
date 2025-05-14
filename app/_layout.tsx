@@ -1,8 +1,4 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -11,22 +7,27 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { ApolloProvider } from "@apollo/client";
 
-import { useColorScheme } from "@/hooks/useColorScheme";
 import "@/i18n"; // Import i18n configuration
 import { client } from "@/services/apolloClient";
 import { AuthProvider } from "@/services/authContext";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
+import { View } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    Suisse: require("../assets/fonts/SuisseIntl-Regular.ttf"),
-    SuisseMedium: require("../assets/fonts/SuisseIntl-Medium.ttf"),
-    SuisseBold: require("../assets/fonts/SuisseIntl-Bold.ttf"),
+    "Geist-Thin": require("../assets/fonts/Geist-Thin.ttf"),
+    "Geist-ExtraLight": require("../assets/fonts/Geist-ExtraLight.ttf"),
+    "Geist-Light": require("../assets/fonts/Geist-Light.ttf"),
+    "Geist-Regular": require("../assets/fonts/Geist-Regular.ttf"),
+    "Geist-Medium": require("../assets/fonts/Geist-Medium.ttf"),
+    "Geist-SemiBold": require("../assets/fonts/Geist-SemiBold.ttf"),
+    "Geist-Bold": require("../assets/fonts/Geist-Bold.ttf"),
+    "Geist-ExtraBold": require("../assets/fonts/Geist-ExtraBold.ttf"),
+    "Geist-Black": require("../assets/fonts/Geist-Black.ttf"),
   });
 
   useEffect(() => {
@@ -59,16 +60,14 @@ export default function RootLayout() {
   return (
     <ApolloProvider client={client}>
       <AuthProvider>
-        <ThemeProvider
-          // value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          value={DefaultTheme}
-        >
-          <Stack>
+        <ThemeProvider value={DefaultTheme}>
+          <Stack screenOptions={{ navigationBarColor: "#ffffff" }}>
+            t
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
           </Stack>
-          <StatusBar style="auto" />
+          <StatusBar style="dark" />
         </ThemeProvider>
       </AuthProvider>
     </ApolloProvider>

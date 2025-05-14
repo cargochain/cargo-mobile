@@ -49,7 +49,6 @@ export type CurrentUser = {
   name: Scalars['String']['output'];
   nif: Scalars['String']['output'];
   phoneNumber: Scalars['String']['output'];
-  role: Scalars['String']['output'];
 };
 
 export type Driver = {
@@ -71,19 +70,25 @@ export type File = {
 export type Mutation = {
   __typename?: 'Mutation';
   assignDriver: Shipment;
+  completeDelivery: Shipment;
   createCompany: Company;
   createShipment: Shipment;
   refreshToken: RefreshTokenResponse;
   signIn: UserSignInResponse;
   signUp: UserSignUpResponse;
   startDelivery: Shipment;
+  uploadShipmentBase64Files: Shipment;
   uploadShipmentFiles: Shipment;
-  userUploadShipmentFiles: Shipment;
 };
 
 
 export type MutationAssignDriverArgs = {
   input: AssignDriverInput;
+};
+
+
+export type MutationCompleteDeliveryArgs = {
+  shipmentId: Scalars['ID']['input'];
 };
 
 
@@ -117,13 +122,13 @@ export type MutationStartDeliveryArgs = {
 };
 
 
-export type MutationUploadShipmentFilesArgs = {
-  input: UploadShipmentFilesInput;
+export type MutationUploadShipmentBase64FilesArgs = {
+  input: UploadShipmentBase64FilesInput;
 };
 
 
-export type MutationUserUploadShipmentFilesArgs = {
-  input: UserUploadShipmentFilesInput;
+export type MutationUploadShipmentFilesArgs = {
+  input: UploadShipmentFilesInput;
 };
 
 export type Query = {
@@ -185,6 +190,11 @@ export type ShipmentNotification = {
   updatedAt: Scalars['String']['output'];
 };
 
+export type UploadShipmentBase64FilesInput = {
+  files: Array<UserBase64FileInput>;
+  shipmentId: Scalars['ID']['input'];
+};
+
 export type UploadShipmentFilesInput = {
   files: Array<Scalars['Upload']['input']>;
   shipmentId: Scalars['ID']['input'];
@@ -216,6 +226,7 @@ export type UserSignInResponse = {
 
 export type UserSignUpInput = {
   email: Scalars['String']['input'];
+  isAdmin: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   nif: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -226,11 +237,6 @@ export type UserSignUpResponse = {
   __typename?: 'UserSignUpResponse';
   message: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
-};
-
-export type UserUploadShipmentFilesInput = {
-  files: Array<UserBase64FileInput>;
-  shipmentId: Scalars['ID']['input'];
 };
 
 export type GetDriverShipmentsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -252,12 +258,12 @@ export type StartDeliveryMutationVariables = Exact<{
 
 export type StartDeliveryMutation = { __typename?: 'Mutation', startDelivery: { __typename?: 'Shipment', id: string } };
 
-export type UserUploadShipmentFilesMutationVariables = Exact<{
-  input: UserUploadShipmentFilesInput;
+export type UploadShipmentBase64FilesMutationVariables = Exact<{
+  input: UploadShipmentBase64FilesInput;
 }>;
 
 
-export type UserUploadShipmentFilesMutation = { __typename?: 'Mutation', userUploadShipmentFiles: { __typename?: 'Shipment', id: string } };
+export type UploadShipmentBase64FilesMutation = { __typename?: 'Mutation', uploadShipmentBase64Files: { __typename?: 'Shipment', id: string } };
 
 export type RefreshTokenMutationVariables = Exact<{
   refreshToken: Scalars['String']['input'];
@@ -283,7 +289,7 @@ export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: '
 export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'CurrentUser', id: string, nif: string, email: string, name: string, role: string, phoneNumber: string } | null };
+export type GetUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'CurrentUser', id: string, nif: string, email: string, name: string, phoneNumber: string } | null };
 
 
 export const GetDriverShipmentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDriverShipments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"driverShipments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"company"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode;
@@ -380,33 +386,33 @@ export function useStartDeliveryMutation(baseOptions?: Apollo.MutationHookOption
 export type StartDeliveryMutationHookResult = ReturnType<typeof useStartDeliveryMutation>;
 export type StartDeliveryMutationResult = Apollo.MutationResult<StartDeliveryMutation>;
 export type StartDeliveryMutationOptions = Apollo.BaseMutationOptions<StartDeliveryMutation, StartDeliveryMutationVariables>;
-export const UserUploadShipmentFilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UserUploadShipmentFiles"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserUploadShipmentFilesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userUploadShipmentFiles"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode;
-export type UserUploadShipmentFilesMutationFn = Apollo.MutationFunction<UserUploadShipmentFilesMutation, UserUploadShipmentFilesMutationVariables>;
+export const UploadShipmentBase64FilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadShipmentBase64Files"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UploadShipmentBase64FilesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadShipmentBase64Files"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode;
+export type UploadShipmentBase64FilesMutationFn = Apollo.MutationFunction<UploadShipmentBase64FilesMutation, UploadShipmentBase64FilesMutationVariables>;
 
 /**
- * __useUserUploadShipmentFilesMutation__
+ * __useUploadShipmentBase64FilesMutation__
  *
- * To run a mutation, you first call `useUserUploadShipmentFilesMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUserUploadShipmentFilesMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUploadShipmentBase64FilesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadShipmentBase64FilesMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [userUploadShipmentFilesMutation, { data, loading, error }] = useUserUploadShipmentFilesMutation({
+ * const [uploadShipmentBase64FilesMutation, { data, loading, error }] = useUploadShipmentBase64FilesMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useUserUploadShipmentFilesMutation(baseOptions?: Apollo.MutationHookOptions<UserUploadShipmentFilesMutation, UserUploadShipmentFilesMutationVariables>) {
+export function useUploadShipmentBase64FilesMutation(baseOptions?: Apollo.MutationHookOptions<UploadShipmentBase64FilesMutation, UploadShipmentBase64FilesMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UserUploadShipmentFilesMutation, UserUploadShipmentFilesMutationVariables>(UserUploadShipmentFilesDocument, options);
+        return Apollo.useMutation<UploadShipmentBase64FilesMutation, UploadShipmentBase64FilesMutationVariables>(UploadShipmentBase64FilesDocument, options);
       }
-export type UserUploadShipmentFilesMutationHookResult = ReturnType<typeof useUserUploadShipmentFilesMutation>;
-export type UserUploadShipmentFilesMutationResult = Apollo.MutationResult<UserUploadShipmentFilesMutation>;
-export type UserUploadShipmentFilesMutationOptions = Apollo.BaseMutationOptions<UserUploadShipmentFilesMutation, UserUploadShipmentFilesMutationVariables>;
+export type UploadShipmentBase64FilesMutationHookResult = ReturnType<typeof useUploadShipmentBase64FilesMutation>;
+export type UploadShipmentBase64FilesMutationResult = Apollo.MutationResult<UploadShipmentBase64FilesMutation>;
+export type UploadShipmentBase64FilesMutationOptions = Apollo.BaseMutationOptions<UploadShipmentBase64FilesMutation, UploadShipmentBase64FilesMutationVariables>;
 export const RefreshTokenDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RefreshToken"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refreshToken"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refreshToken"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refreshToken"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refreshToken"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"}}]}}]}}]} as unknown as DocumentNode;
 export type RefreshTokenMutationFn = Apollo.MutationFunction<RefreshTokenMutation, RefreshTokenMutationVariables>;
 
@@ -488,7 +494,7 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
-export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"Field","name":{"kind":"Name","value":"phoneNumber"}}]}}]}}]} as unknown as DocumentNode;
+export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phoneNumber"}}]}}]}}]} as unknown as DocumentNode;
 
 /**
  * __useGetUserQuery__

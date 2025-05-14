@@ -5,11 +5,16 @@ export const Fonts = {
     semiBold: "Inter-SemiBold",
     bold: "Inter-Bold",
   },
-  suisse: {
-    regular: "SuisseIntl-Regular-WebM",
-    medium: "SuisseIntl-Medium-WebM",
-    semiBold: "SuisseIntl-Bold-WebM",
-    bold: "SuisseIntl-Bold-WebM",
+  geist: {
+    thin: "Geist-Thin",
+    extraLight: "Geist-ExtraLight",
+    light: "Geist-Light",
+    regular: "Geist-Regular",
+    medium: "Geist-Medium",
+    semiBold: "Geist-SemiBold",
+    bold: "Geist-Bold",
+    extraBold: "Geist-ExtraBold",
+    black: "Geist-Black",
   },
 } as const;
 
