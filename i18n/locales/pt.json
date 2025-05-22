@@ -17,7 +17,9 @@
         "gallery": "Galeria",
         "camera": "Câmera",
         "selectPhotos": "Selecionar Fotos",
+        "addPhotos": "Adicionar Fotos",
         "help_center": "Centro de Ajuda",
+        "trackingCode": "Código de Rastreio",
         "back": "Voltar"
     },
     "welcome": {

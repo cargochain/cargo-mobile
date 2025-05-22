@@ -14,6 +14,8 @@
         "error": "Error",
         "support": "Soporte",
         "selectPhotos": "Seleccionar Fotos",
+        "addPhotos": "Agregar Fotos",
+        "trackingCode": "Código de Rastreio",
         "help_center": "Centro de Ayuda"
     },
     "auth": {

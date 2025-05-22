@@ -11,8 +11,8 @@ import {
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
 // Mock GraphQL endpoint - replace with your actual endpoint
-// const API_URL = "http://localhost:8080/graphql";
-const API_URL = "https://21cf-89-181-200-235.ngrok-free.app/graphql";
+const API_URL = "http://localhost:8080/graphql";
+// const API_URL = "https://21cf-89-181-200-235.ngrok-free.app/graphql";
 //
 // Create Upload link for file uploads
 const uploadLink = createUploadLink({

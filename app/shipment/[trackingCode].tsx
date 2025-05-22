@@ -7,6 +7,8 @@ import {
   Modal,
   Image,
   Platform,
+  Pressable,
+  FlatList,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -18,12 +20,11 @@ import { useTranslation } from "react-i18next";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/shared/Button";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { IconSymbol } from "@/components/ui/IconSymbol";
 import { FontAwesome6 } from "@expo/vector-icons";
 
-const GET_DRIVER_SHIPMENT_QUERY = gql`
-  query GetDriverShipment($shipmentId: ID!) {
-    driverShipment(shipmentId: $shipmentId) {
+const GET_SHIPMENT_QUERY = gql`
+  query GetShipment($trackingCode: String!) {
+    shipment(trackingCode: $trackingCode) {
       id
       trackingCode
       status
@@ -46,9 +47,17 @@ const GET_DRIVER_SHIPMENT_QUERY = gql`
 `;
 
 const START_DELIVERY_MUTATION = gql`
-  mutation StartDelivery($shipmentId: ID!) {
-    startDelivery(shipmentId: $shipmentId) {
-      id
+  mutation StartDelivery($trackingCode: String!) {
+    startDelivery(trackingCode: $trackingCode) {
+      trackingCode
+    }
+  }
+`;
+
+const COMPLETE_DELIVERY_MUTATION = gql`
+  mutation CompleteDelivery($trackingCode: String!) {
+    completeDelivery(trackingCode: $trackingCode) {
+      trackingCode
     }
   }
 `;
@@ -64,14 +73,14 @@ const UPLOAD_SHIPMENT_BASE64_FILES_MUTATION = gql`
 export default function ShipmentDetailsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { id } = useLocalSearchParams();
+  const { trackingCode } = useLocalSearchParams();
   const navigation = useNavigation();
   const [isImageSelectorModalVisible, setIsImageSelectorModalVisible] =
     useState(false);
 
   // Fetch the shipment details
-  const { data, loading, error } = useQuery(GET_DRIVER_SHIPMENT_QUERY, {
-    variables: { shipmentId: id },
+  const { data, loading, error } = useQuery(GET_SHIPMENT_QUERY, {
+    variables: { trackingCode },
   });
 
   // start delivery mutation
@@ -80,9 +89,19 @@ export default function ShipmentDetailsScreen() {
     {
       refetchQueries: [
         {
-          query: GET_DRIVER_SHIPMENT_QUERY,
-          variables: { shipmentId: id },
+          query: GET_SHIPMENT_QUERY,
+          variables: { trackingCode },
         },
+      ],
+    }
+  );
+
+  // complete delivery mutation
+  const [completeDelivery, { loading: completeDeliveryLoading }] = useMutation(
+    COMPLETE_DELIVERY_MUTATION,
+    {
+      refetchQueries: [
+        { query: GET_SHIPMENT_QUERY, variables: { trackingCode } },
       ],
     }
   );
@@ -93,7 +112,7 @@ export default function ShipmentDetailsScreen() {
     { loading: uploadShipmentBase64FilesLoading },
   ] = useMutation(UPLOAD_SHIPMENT_BASE64_FILES_MUTATION, {
     refetchQueries: [
-      { query: GET_DRIVER_SHIPMENT_QUERY, variables: { shipmentId: id } },
+      { query: GET_SHIPMENT_QUERY, variables: { trackingCode } },
     ],
   });
 
@@ -109,7 +128,10 @@ export default function ShipmentDetailsScreen() {
     return <ThemedText>{t("Error loading shipment details")}</ThemedText>;
   }
 
-  const shipment = data.driverShipment;
+  const shipment = data.shipment;
+  if (!shipment) {
+    return <ThemedText>{t("Shipment not found")}</ThemedText>;
+  }
 
   const renderActionButton = () => {
     switch (shipment.status) {
@@ -118,7 +140,9 @@ export default function ShipmentDetailsScreen() {
           <Button
             title={t("Start Delivery")}
             onPress={() =>
-              startDelivery({ variables: { shipmentId: shipment.id } })
+              startDelivery({
+                variables: { trackingCode: shipment.trackingCode },
+              })
             }
             loading={startDeliveryLoading}
             variant="primary"
@@ -130,9 +154,11 @@ export default function ShipmentDetailsScreen() {
           <Button
             title={t("Confirm Delivery")}
             onPress={() =>
-              startDelivery({ variables: { shipmentId: shipment.id } })
+              completeDelivery({
+                variables: { trackingCode: shipment.trackingCode },
+              })
             }
-            loading={startDeliveryLoading}
+            loading={completeDeliveryLoading}
             variant="primary"
             size="large"
           />
@@ -157,6 +183,10 @@ export default function ShipmentDetailsScreen() {
         mimeType: string;
       }[]
     >([]);
+
+    const [selectedImageIndexes, setSelectedImageIndexes] = useState<number[]>(
+      []
+    );
 
     const pickImage = async () => {
       // Request permission to access media library
@@ -183,10 +213,6 @@ export default function ShipmentDetailsScreen() {
         }));
         setImages((prevImages) => [...prevImages, ...newImages]);
       }
-    };
-
-    const deleteImage = (index: number) => {
-      setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
 
     // upload images
@@ -229,22 +255,78 @@ export default function ShipmentDetailsScreen() {
       }
     };
 
-    const renderImages = () => {
+    const handleImageLongPress = (index: number) => {
+      setSelectedImageIndexes((prevIndexes) => {
+        if (prevIndexes.includes(index)) {
+          return prevIndexes.filter((i) => i !== index);
+        }
+        return [...prevIndexes, index];
+      });
+    };
+
+    const handleImagePress = (index: number) => {
+      if (selectedImageIndexes.length > 0) {
+        handleImageLongPress(index);
+      }
+    };
+
+    const deleteSelectedImages = () => {
+      setImages((prevImages) =>
+        prevImages.filter((_, index) => !selectedImageIndexes.includes(index))
+      );
+      setSelectedImageIndexes([]);
+    };
+
+    const renderSelectedImages = () => {
       return images.map((image, index) => (
-        <View key={index}>
-          <Image source={{ uri: image.uri }} style={styles.image} />
-          <TouchableOpacity onPress={() => deleteImage(index)}>
-            <IconSymbol name="trash" size={24} color={Colors.light.error} />
-          </TouchableOpacity>
-        </View>
+        <Pressable
+          onPress={() => handleImagePress(index)}
+          onLongPress={() => handleImageLongPress(index)}
+          key={index}
+          style={[
+            styles.selectedImageContainer,
+            selectedImageIndexes.includes(index) && styles.selectedImagePressed,
+          ]}
+        >
+          <Image source={{ uri: image.uri }} style={styles.selectedImage} />
+          {selectedImageIndexes.includes(index) && (
+            <View style={styles.selectedOverlay}>
+              <FontAwesome6 name="check" size={24} color={Colors.light.white} />
+            </View>
+          )}
+        </Pressable>
       ));
     };
 
     // render options
     const renderOptions = () => {
-      if (images.length === 0) {
+      if (selectedImageIndexes.length > 0) {
         return (
+          <Button
+            title={t("Delete Selected")}
+            onPress={deleteSelectedImages}
+            variant="secondary"
+            size="medium"
+          />
+        );
+      }
+      return (
+        <Button
+          title={t("Continue")}
+          onPress={uploadImages}
+          variant="primary"
+          size="medium"
+        />
+      );
+    };
+
+    return (
+      <Modal visible={isVisible} onRequestClose={onClose}>
+        <SafeAreaView style={styles.imageSelectorModalWrapper}>
           <View style={styles.imageSelectorModalOptions}>
+            <TouchableOpacity onPress={onClose} style={styles.addPhotosButton}>
+              <Text style={styles.addPhotosButtonText}>{t("Cancel")}</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={pickImage}
               style={styles.addPhotosButton}
@@ -254,86 +336,63 @@ export default function ShipmentDetailsScreen() {
                 {t("common.selectPhotos")}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onClose} style={styles.addPhotosButton}>
-              <Text style={styles.addPhotosButtonText}>{t("Cancel")}</Text>
-            </TouchableOpacity>
           </View>
-        );
-      }
-
-      return (
-        <View style={styles.imageSelectorModalOptions}>
-          <Button
-            title={t("Continue")}
-            onPress={uploadImages}
-            variant="primary"
-            size="medium"
-          />
-          <Button
-            title={t("Cancel")}
-            onPress={onClose}
-            variant="outline"
-            size="medium"
-          />
-        </View>
-      );
-    };
-
-    return (
-      <Modal visible={isVisible} onRequestClose={onClose}>
-        <SafeAreaView style={styles.imageSelectorModalWrapper}>
-          <View style={styles.imageSelectorModalImages}>{renderImages()}</View>
-          {renderOptions()}
+          <View style={styles.imageSelectorModalImages}>
+            {images.length > 0 && renderSelectedImages()}
+          </View>
+          <View style={styles.imageSelectorModalExtraOptions}>
+            {images.length > 0 && renderOptions()}
+          </View>
         </SafeAreaView>
       </Modal>
     );
   };
 
-  console.log(shipment.files);
-
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <FontAwesome6
-            name="chevron-left"
-            size={16}
-            color={Colors.light.primary}
-          />
-          <ThemedText type="defaultSemiBold">{t("common.back")}</ThemedText>
-        </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitleLabel}>Código de Rastreio:</Text>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={styles.backButton}
+          >
+            <FontAwesome6
+              name="chevron-left"
+              size={16}
+              color={Colors.light.primary}
+            />
+            <ThemedText type="default">{t("common.back")}</ThemedText>
+          </TouchableOpacity>
+          <Text style={styles.headerTitleLabel}>
+            {t("common.trackingCode")}:
+          </Text>
           <Text style={styles.headerTitleValue}>{shipment.trackingCode}</Text>
         </View>
+        <TouchableOpacity
+          onPress={() => setIsImageSelectorModalVisible(true)}
+          style={styles.addPhotosButton}
+        >
+          <FontAwesome6 name="plus" size={18} color={Colors.light.info} />
+          <Text style={styles.addPhotosButtonText}>
+            {t("common.addPhotos")}
+          </Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.container}>
         <View style={styles.photos}>
-          <View style={styles.photosHeader}>
-            <Text style={styles.photosHeaderText}>{t("Photos")}</Text>
-            <TouchableOpacity
-              onPress={() => setIsImageSelectorModalVisible(true)}
-              style={styles.addPhotosButton}
-            >
-              <FontAwesome6 name="images" size={18} color={Colors.light.info} />
-              <Text style={styles.addPhotosButtonText}>
-                {t("common.selectPhotos")}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.photosBody}>
-            {shipment.files.map((file: any, index: number) => (
-              <View style={styles.photoItem} key={index}>
+          <FlatList
+            data={shipment.files}
+            renderItem={({ item }) => (
+              <View style={styles.photoItem} key={item.id}>
                 <Image
-                  source={{ uri: file.url }}
+                  source={{ uri: item.url }}
                   style={styles.photoItemImage}
                 />
               </View>
-            ))}
-          </View>
+            )}
+            numColumns={3}
+            keyExtractor={(item) => item.id}
+          />
         </View>
 
         <View style={styles.bottomContainer}>{renderActionButton()}</View>
@@ -360,6 +419,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: `${Colors.light.primary}16`,
     gap: 16,
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
   },
   headerTitleContainer: {
     gap: 1,
@@ -369,26 +431,20 @@ const styles = StyleSheet.create({
     color: `${Colors.light.text}90`,
   },
   headerTitleValue: {
-    fontSize: 18,
+    fontSize: 20,
     color: Colors.light.text,
-    fontFamily: "SuisseBold",
     textTransform: "uppercase",
+    fontWeight: "bold",
   },
   container: {
     flex: 1,
-    padding: 16,
-    gap: 16,
     backgroundColor: Colors.light.secondary,
   },
   backButton: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-  },
-  backButtonText: {
-    color: Colors.light.primary,
-    fontSize: 16,
-    fontFamily: "SuisseIntl-Medium",
+    marginBottom: 20,
   },
   statusContainer: {
     flexDirection: "row",
@@ -421,10 +477,7 @@ const styles = StyleSheet.create({
     fontFamily: "SuisseBold",
   },
   photosBody: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingHorizontal: 2,
+    gap: 1,
   },
   photosButton: {
     flexDirection: "row",
@@ -437,16 +490,14 @@ const styles = StyleSheet.create({
     fontFamily: "SuisseMedium",
   },
   photoItem: {
-    width: "32.5%", // 3 columns with some spacing
+    width: "33.33%", // 3 columns with some spacing
     aspectRatio: 1, // Square images
-    marginBottom: 2,
     overflow: "hidden",
-    borderRadius: 8,
+    padding: 1,
   },
   photoItemImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 8,
   },
   actionButton: {
     color: Colors.light.info,
@@ -479,25 +530,57 @@ const styles = StyleSheet.create({
   },
   imageSelectorModalWrapper: {
     flex: 1,
-    backgroundColor: Colors.light.secondary,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  imageSelectorModalOptions: {
-    alignItems: "center",
-    justifyContent: "space-between",
+    backgroundColor: Colors.light.white,
+    padding: 16,
     gap: 16,
   },
+  imageSelectorModalOptions: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    marginBottom: 16,
+  },
+  imageSelectorModalExtraOptions: {
+    position: "absolute",
+    bottom: 40,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    marginBottom: 16,
+  },
   imageSelectorModalImages: {
+    flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 4,
-    padding: 16,
   },
-  image: {
-    width: 100,
-    height: 100,
-    borderWidth: 1,
-    borderColor: `${Colors.light.primary}33`,
+  selectedImageContainer: {
+    width: "33.33%", // 3 columns with some spacing
+    aspectRatio: 1, // Square images
+    overflow: "hidden",
+  },
+  selectedImagePressed: {
+    borderWidth: 4,
+    borderColor: Colors.light.white,
+  },
+  selectedImage: {
+    width: "100%",
+    height: "100%",
+    padding: 1,
+  },
+  selectedOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

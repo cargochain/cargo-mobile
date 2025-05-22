@@ -12,7 +12,6 @@ import { client } from "@/services/apolloClient";
 import { AuthProvider } from "@/services/authContext";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
-import { View } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

@@ -17,6 +17,8 @@
         "gallery": "Gallery",
         "camera": "Camera",
         "selectPhotos": "Select Photos",
+        "addPhotos": "Add Photos",
+        "trackingCode": "Tracking Code",
         "help_center": "Help Center",
         "back": "Back"
     },

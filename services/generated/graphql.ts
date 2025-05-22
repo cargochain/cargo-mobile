@@ -39,7 +39,6 @@ export type CreateCompanyInput = {
 
 export type CreateShipmentInput = {
   companyId: Scalars['ID']['input'];
-  files: Array<Scalars['Upload']['input']>;
 };
 
 export type CurrentUser = {
@@ -47,8 +46,6 @@ export type CurrentUser = {
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-  nif: Scalars['String']['output'];
-  phoneNumber: Scalars['String']['output'];
 };
 
 export type Driver = {
@@ -88,7 +85,7 @@ export type MutationAssignDriverArgs = {
 
 
 export type MutationCompleteDeliveryArgs = {
-  shipmentId: Scalars['ID']['input'];
+  trackingCode: Scalars['String']['input'];
 };
 
 
@@ -118,7 +115,7 @@ export type MutationSignUpArgs = {
 
 
 export type MutationStartDeliveryArgs = {
-  shipmentId: Scalars['ID']['input'];
+  trackingCode: Scalars['String']['input'];
 };
 
 
@@ -135,26 +132,30 @@ export type Query = {
   __typename?: 'Query';
   companies: Array<Company>;
   currentUser?: Maybe<CurrentUser>;
-  driverShipment: Shipment;
-  driverShipments: Array<Shipment>;
-  searchUsersByNIF: Array<Driver>;
+  searchUsers: Array<Driver>;
   shipment: Shipment;
+  shipmentNotifications: Array<ShipmentNotification>;
   shipments: Array<Shipment>;
 };
 
 
-export type QueryDriverShipmentArgs = {
-  shipmentId: Scalars['ID']['input'];
-};
-
-
-export type QuerySearchUsersByNifArgs = {
-  input: SearchUsersByNifInput;
+export type QuerySearchUsersArgs = {
+  input: SearchUsersInput;
 };
 
 
 export type QueryShipmentArgs = {
   trackingCode: Scalars['String']['input'];
+};
+
+
+export type QueryShipmentNotificationsArgs = {
+  shipmentId: Scalars['ID']['input'];
+};
+
+
+export type QueryShipmentsArgs = {
+  input: ShipmentSearchInput;
 };
 
 export type RefreshTokenResponse = {
@@ -163,7 +164,7 @@ export type RefreshTokenResponse = {
   refreshToken: Scalars['String']['output'];
 };
 
-export type SearchUsersByNifInput = {
+export type SearchUsersInput = {
   searchTerm: Scalars['String']['input'];
 };
 
@@ -188,6 +189,11 @@ export type ShipmentNotification = {
   id: Scalars['ID']['output'];
   type: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
+};
+
+export type ShipmentSearchInput = {
+  driverId?: InputMaybe<Scalars['ID']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type UploadShipmentBase64FilesInput = {
@@ -239,24 +245,33 @@ export type UserSignUpResponse = {
   success: Scalars['Boolean']['output'];
 };
 
-export type GetDriverShipmentsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetDriverShipmentsQuery = { __typename?: 'Query', driverShipments: Array<{ __typename?: 'Shipment', id: string, trackingCode: string, status: string, createdAt: string, updatedAt: string, company: { __typename?: 'Company', name: string }, user: { __typename?: 'User', name: string } }> };
-
-export type GetDriverShipmentQueryVariables = Exact<{
-  shipmentId: Scalars['ID']['input'];
+export type SearchShipmentsQueryVariables = Exact<{
+  input: ShipmentSearchInput;
 }>;
 
 
-export type GetDriverShipmentQuery = { __typename?: 'Query', driverShipment: { __typename?: 'Shipment', id: string, trackingCode: string, status: string, company: { __typename?: 'Company', id: string, name: string, nif: string }, user: { __typename?: 'User', id: string, name: string, nif: string }, files: Array<{ __typename?: 'File', id: string, url: string }> } };
+export type SearchShipmentsQuery = { __typename?: 'Query', shipments: Array<{ __typename?: 'Shipment', id: string, trackingCode: string, status: string, createdAt: string, updatedAt: string, company: { __typename?: 'Company', name: string }, user: { __typename?: 'User', name: string } }> };
+
+export type GetShipmentQueryVariables = Exact<{
+  trackingCode: Scalars['String']['input'];
+}>;
+
+
+export type GetShipmentQuery = { __typename?: 'Query', shipment: { __typename?: 'Shipment', id: string, trackingCode: string, status: string, company: { __typename?: 'Company', id: string, name: string, nif: string }, user: { __typename?: 'User', id: string, name: string, nif: string }, files: Array<{ __typename?: 'File', id: string, url: string }> } };
 
 export type StartDeliveryMutationVariables = Exact<{
-  shipmentId: Scalars['ID']['input'];
+  trackingCode: Scalars['String']['input'];
 }>;
 
 
-export type StartDeliveryMutation = { __typename?: 'Mutation', startDelivery: { __typename?: 'Shipment', id: string } };
+export type StartDeliveryMutation = { __typename?: 'Mutation', startDelivery: { __typename?: 'Shipment', trackingCode: string } };
+
+export type CompleteDeliveryMutationVariables = Exact<{
+  trackingCode: Scalars['String']['input'];
+}>;
+
+
+export type CompleteDeliveryMutation = { __typename?: 'Mutation', completeDelivery: { __typename?: 'Shipment', trackingCode: string } };
 
 export type UploadShipmentBase64FilesMutationVariables = Exact<{
   input: UploadShipmentBase64FilesInput;
@@ -289,77 +304,78 @@ export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: '
 export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'CurrentUser', id: string, nif: string, email: string, name: string, phoneNumber: string } | null };
+export type GetUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'CurrentUser', id: string, email: string, name: string } | null };
 
 
-export const GetDriverShipmentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDriverShipments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"driverShipments"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"company"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode;
+export const SearchShipmentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchShipments"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ShipmentSearchInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shipments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"company"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode;
 
 /**
- * __useGetDriverShipmentsQuery__
+ * __useSearchShipmentsQuery__
  *
- * To run a query within a React component, call `useGetDriverShipmentsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetDriverShipmentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchShipmentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchShipmentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetDriverShipmentsQuery({
+ * const { data, loading, error } = useSearchShipmentsQuery({
  *   variables: {
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useGetDriverShipmentsQuery(baseOptions?: Apollo.QueryHookOptions<GetDriverShipmentsQuery, GetDriverShipmentsQueryVariables>) {
+export function useSearchShipmentsQuery(baseOptions: Apollo.QueryHookOptions<SearchShipmentsQuery, SearchShipmentsQueryVariables> & ({ variables: SearchShipmentsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetDriverShipmentsQuery, GetDriverShipmentsQueryVariables>(GetDriverShipmentsDocument, options);
+        return Apollo.useQuery<SearchShipmentsQuery, SearchShipmentsQueryVariables>(SearchShipmentsDocument, options);
       }
-export function useGetDriverShipmentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDriverShipmentsQuery, GetDriverShipmentsQueryVariables>) {
+export function useSearchShipmentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchShipmentsQuery, SearchShipmentsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetDriverShipmentsQuery, GetDriverShipmentsQueryVariables>(GetDriverShipmentsDocument, options);
+          return Apollo.useLazyQuery<SearchShipmentsQuery, SearchShipmentsQueryVariables>(SearchShipmentsDocument, options);
         }
-export function useGetDriverShipmentsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDriverShipmentsQuery, GetDriverShipmentsQueryVariables>) {
+export function useSearchShipmentsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<SearchShipmentsQuery, SearchShipmentsQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetDriverShipmentsQuery, GetDriverShipmentsQueryVariables>(GetDriverShipmentsDocument, options);
+          return Apollo.useSuspenseQuery<SearchShipmentsQuery, SearchShipmentsQueryVariables>(SearchShipmentsDocument, options);
         }
-export type GetDriverShipmentsQueryHookResult = ReturnType<typeof useGetDriverShipmentsQuery>;
-export type GetDriverShipmentsLazyQueryHookResult = ReturnType<typeof useGetDriverShipmentsLazyQuery>;
-export type GetDriverShipmentsSuspenseQueryHookResult = ReturnType<typeof useGetDriverShipmentsSuspenseQuery>;
-export type GetDriverShipmentsQueryResult = Apollo.QueryResult<GetDriverShipmentsQuery, GetDriverShipmentsQueryVariables>;
-export const GetDriverShipmentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetDriverShipment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"shipmentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"driverShipment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"shipmentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"shipmentId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"company"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}}]}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]} as unknown as DocumentNode;
+export type SearchShipmentsQueryHookResult = ReturnType<typeof useSearchShipmentsQuery>;
+export type SearchShipmentsLazyQueryHookResult = ReturnType<typeof useSearchShipmentsLazyQuery>;
+export type SearchShipmentsSuspenseQueryHookResult = ReturnType<typeof useSearchShipmentsSuspenseQuery>;
+export type SearchShipmentsQueryResult = Apollo.QueryResult<SearchShipmentsQuery, SearchShipmentsQueryVariables>;
+export const GetShipmentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetShipment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shipment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"trackingCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"company"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}}]}},{"kind":"Field","name":{"kind":"Name","value":"files"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"url"}}]}}]}}]}}]} as unknown as DocumentNode;
 
 /**
- * __useGetDriverShipmentQuery__
+ * __useGetShipmentQuery__
  *
- * To run a query within a React component, call `useGetDriverShipmentQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetDriverShipmentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetShipmentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetShipmentQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetDriverShipmentQuery({
+ * const { data, loading, error } = useGetShipmentQuery({
  *   variables: {
- *      shipmentId: // value for 'shipmentId'
+ *      trackingCode: // value for 'trackingCode'
  *   },
  * });
  */
-export function useGetDriverShipmentQuery(baseOptions: Apollo.QueryHookOptions<GetDriverShipmentQuery, GetDriverShipmentQueryVariables> & ({ variables: GetDriverShipmentQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useGetShipmentQuery(baseOptions: Apollo.QueryHookOptions<GetShipmentQuery, GetShipmentQueryVariables> & ({ variables: GetShipmentQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetDriverShipmentQuery, GetDriverShipmentQueryVariables>(GetDriverShipmentDocument, options);
+        return Apollo.useQuery<GetShipmentQuery, GetShipmentQueryVariables>(GetShipmentDocument, options);
       }
-export function useGetDriverShipmentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetDriverShipmentQuery, GetDriverShipmentQueryVariables>) {
+export function useGetShipmentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetShipmentQuery, GetShipmentQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetDriverShipmentQuery, GetDriverShipmentQueryVariables>(GetDriverShipmentDocument, options);
+          return Apollo.useLazyQuery<GetShipmentQuery, GetShipmentQueryVariables>(GetShipmentDocument, options);
         }
-export function useGetDriverShipmentSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetDriverShipmentQuery, GetDriverShipmentQueryVariables>) {
+export function useGetShipmentSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetShipmentQuery, GetShipmentQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetDriverShipmentQuery, GetDriverShipmentQueryVariables>(GetDriverShipmentDocument, options);
+          return Apollo.useSuspenseQuery<GetShipmentQuery, GetShipmentQueryVariables>(GetShipmentDocument, options);
         }
-export type GetDriverShipmentQueryHookResult = ReturnType<typeof useGetDriverShipmentQuery>;
-export type GetDriverShipmentLazyQueryHookResult = ReturnType<typeof useGetDriverShipmentLazyQuery>;
-export type GetDriverShipmentSuspenseQueryHookResult = ReturnType<typeof useGetDriverShipmentSuspenseQuery>;
-export type GetDriverShipmentQueryResult = Apollo.QueryResult<GetDriverShipmentQuery, GetDriverShipmentQueryVariables>;
-export const StartDeliveryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartDelivery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"shipmentId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"startDelivery"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"shipmentId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"shipmentId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode;
+export type GetShipmentQueryHookResult = ReturnType<typeof useGetShipmentQuery>;
+export type GetShipmentLazyQueryHookResult = ReturnType<typeof useGetShipmentLazyQuery>;
+export type GetShipmentSuspenseQueryHookResult = ReturnType<typeof useGetShipmentSuspenseQuery>;
+export type GetShipmentQueryResult = Apollo.QueryResult<GetShipmentQuery, GetShipmentQueryVariables>;
+export const StartDeliveryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"StartDelivery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"startDelivery"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"trackingCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}}]}}]}}]} as unknown as DocumentNode;
 export type StartDeliveryMutationFn = Apollo.MutationFunction<StartDeliveryMutation, StartDeliveryMutationVariables>;
 
 /**
@@ -375,7 +391,7 @@ export type StartDeliveryMutationFn = Apollo.MutationFunction<StartDeliveryMutat
  * @example
  * const [startDeliveryMutation, { data, loading, error }] = useStartDeliveryMutation({
  *   variables: {
- *      shipmentId: // value for 'shipmentId'
+ *      trackingCode: // value for 'trackingCode'
  *   },
  * });
  */
@@ -386,6 +402,33 @@ export function useStartDeliveryMutation(baseOptions?: Apollo.MutationHookOption
 export type StartDeliveryMutationHookResult = ReturnType<typeof useStartDeliveryMutation>;
 export type StartDeliveryMutationResult = Apollo.MutationResult<StartDeliveryMutation>;
 export type StartDeliveryMutationOptions = Apollo.BaseMutationOptions<StartDeliveryMutation, StartDeliveryMutationVariables>;
+export const CompleteDeliveryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CompleteDelivery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"completeDelivery"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"trackingCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}}]}}]}}]} as unknown as DocumentNode;
+export type CompleteDeliveryMutationFn = Apollo.MutationFunction<CompleteDeliveryMutation, CompleteDeliveryMutationVariables>;
+
+/**
+ * __useCompleteDeliveryMutation__
+ *
+ * To run a mutation, you first call `useCompleteDeliveryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCompleteDeliveryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [completeDeliveryMutation, { data, loading, error }] = useCompleteDeliveryMutation({
+ *   variables: {
+ *      trackingCode: // value for 'trackingCode'
+ *   },
+ * });
+ */
+export function useCompleteDeliveryMutation(baseOptions?: Apollo.MutationHookOptions<CompleteDeliveryMutation, CompleteDeliveryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CompleteDeliveryMutation, CompleteDeliveryMutationVariables>(CompleteDeliveryDocument, options);
+      }
+export type CompleteDeliveryMutationHookResult = ReturnType<typeof useCompleteDeliveryMutation>;
+export type CompleteDeliveryMutationResult = Apollo.MutationResult<CompleteDeliveryMutation>;
+export type CompleteDeliveryMutationOptions = Apollo.BaseMutationOptions<CompleteDeliveryMutation, CompleteDeliveryMutationVariables>;
 export const UploadShipmentBase64FilesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UploadShipmentBase64Files"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UploadShipmentBase64FilesInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"uploadShipmentBase64Files"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]} as unknown as DocumentNode;
 export type UploadShipmentBase64FilesMutationFn = Apollo.MutationFunction<UploadShipmentBase64FilesMutation, UploadShipmentBase64FilesMutationVariables>;
 
@@ -494,7 +537,7 @@ export function useSignUpMutation(baseOptions?: Apollo.MutationHookOptions<SignU
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<SignUpMutation, SignUpMutationVariables>;
-export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nif"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"phoneNumber"}}]}}]}}]} as unknown as DocumentNode;
+export const GetUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"currentUser"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode;
 
 /**
  * __useGetUserQuery__

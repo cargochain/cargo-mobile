@@ -11,10 +11,12 @@ import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { changeLanguage, getAvailableLanguages } from "@/i18n";
+import { useAuth } from "@/services/authContext";
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const availableLanguages = getAvailableLanguages();
+  const { logout } = useAuth();
 
   const getLanguageFlag = (lang: string) => {
     const flags: { [key: string]: string } = {
@@ -27,6 +29,10 @@ export default function SettingsScreen() {
 
   const handleLanguageChange = async (language: string) => {
     await changeLanguage(language as any);
+  };
+
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
@@ -70,6 +76,12 @@ export default function SettingsScreen() {
               </TouchableOpacity>
             ))}
           </View>
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t("settings.logout")}</Text>
+          <TouchableOpacity onPress={handleLogout}>
+            <Text style={styles.sectionTitle}>{t("settings.logout")}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>

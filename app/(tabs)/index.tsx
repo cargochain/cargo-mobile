@@ -8,19 +8,21 @@ import {
   Platform,
 } from "react-native";
 import { gql, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
-import { GetDriverShipmentsQuery } from "@/services/generated/graphql";
-import { getAccessToken } from "@/services/secureStorage";
+import {
+  SearchShipmentsQuery,
+  SearchShipmentsQueryResult,
+} from "@/services/generated/graphql";
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import { useAuth } from "@/services/authContext";
 
-const GET_DRIVER_SHIPMENTS = gql`
-  query GetDriverShipments {
-    driverShipments {
+const GET_SHIPMENTS = gql`
+  query SearchShipments($input: ShipmentSearchInput!) {
+    shipments(input: $input) {
       id
       trackingCode
       status
@@ -39,24 +41,31 @@ const GET_DRIVER_SHIPMENTS = gql`
 export default function ShipmentsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-
-  const { data, loading, error, refetch } = useQuery<GetDriverShipmentsQuery>(
-    GET_DRIVER_SHIPMENTS,
+  const { user } = useAuth();
+  const { data, loading, error, refetch } = useQuery<SearchShipmentsQuery>(
+    GET_SHIPMENTS,
     {
       pollInterval: 5000,
+      variables: {
+        input: {
+          driverId: user?.id,
+        },
+      },
     }
   );
+
+  console.log(data);
 
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "ASSIGNED":
-        return "Pendente";
+        return "🕐 Pendente";
       case "IN_TRANSIT":
-        return "Em andamento";
-      case "COMPLETED":
-        return "Entregue 🎉";
+        return "🚚 Em trânsito";
+      case "DELIVERED":
+        return "🎉 Entregue";
       case "CANCELLED":
-        return "Cancelado";
+        return "❌ Cancelado";
       default:
         return status;
     }
@@ -65,11 +74,11 @@ export default function ShipmentsScreen() {
   const renderShipment = ({
     item,
   }: {
-    item: GetDriverShipmentsQuery["driverShipments"][0];
+    item: SearchShipmentsQuery["shipments"][0];
   }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => router.push(`/shipment/${item.id}`)}
+      onPress={() => router.push(`/shipment/${item.trackingCode}`)}
     >
       <View style={styles.cardHeader}>
         <View style={styles.cardHeaderTitleContainer}>
@@ -126,7 +135,7 @@ export default function ShipmentsScreen() {
           </ThemedText>
         ) : (
           <FlatList
-            data={data?.driverShipments}
+            data={data?.shipments}
             renderItem={renderShipment}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContainer}

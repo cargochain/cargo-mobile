@@ -53,10 +53,8 @@ const GET_USER_QUERY = gql`
   query GetUser {
     currentUser {
       id
-      nif
       email
       name
-      phoneNumber
     }
   }
 `;
