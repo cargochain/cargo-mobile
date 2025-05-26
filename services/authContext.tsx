@@ -13,9 +13,13 @@ import {
   storeRefreshToken,
   clearAuthData,
   getAccessToken,
+  getDeviceData,
+  storeDeviceMetadata,
 } from "./secureStorage";
 import { client } from "./apolloClient";
 import { gql } from "@apollo/client";
+import * as LocalAuthentication from "expo-local-authentication";
+import { useGetUserQuery, useSignInMutation } from "./generated/graphql";
 
 // Define the shape of the auth context
 interface AuthContextType {
@@ -25,6 +29,7 @@ interface AuthContextType {
   login: (nif: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (nif: string, password: string, name: string) => Promise<void>;
+  biometricLogin: () => Promise<void>;
 }
 
 // Create the auth context
@@ -59,6 +64,16 @@ const GET_USER_QUERY = gql`
   }
 `;
 
+// GraphQL mutation for biometric authentication
+const BIOMETRIC_AUTH_MUTATION = gql`
+  mutation BiometricAuth($input: UserSignInWithBiometricInput!) {
+    signInWithBiometric(input: $input) {
+      accessToken
+      refreshToken
+    }
+  }
+`;
+
 // Auth provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
@@ -89,6 +104,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (response.data.currentUser) {
         await storeUserData(response.data.currentUser);
+        const deviceData = await getDeviceData();
+        await storeDeviceMetadata({
+          hasBiometricEnabled: deviceData.isBiometricAvailable,
+          userNif: response.data.currentUser.nif,
+        });
         setUser(response.data.currentUser);
       } else {
         // Token is invalid or expired
@@ -130,6 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Login function
   const login = async (nif: string, pin: string) => {
     try {
+      console.log("login", nif, pin);
       setIsLoading(true);
 
       const response = await client.mutate({
@@ -151,7 +172,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         },
       });
+
+      const deviceData = await getDeviceData();
       await storeUserData(usrResp.data.currentUser);
+      await storeDeviceMetadata({
+        hasBiometricEnabled: deviceData.isBiometricAvailable,
+        userNif: usrResp.data.currentUser.nif,
+      });
       // Update state
       setUser(usrResp.data.currentUser);
     } catch (error) {
@@ -162,14 +189,83 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const biometricLogin = async (): Promise<void> => {
+    const compatible = await LocalAuthentication.hasHardwareAsync();
+    const enrolled = await LocalAuthentication.isEnrolledAsync();
+
+    if (!compatible || !enrolled) {
+      console.warn("Biometric authentication not available");
+      return;
+    }
+
+    // First, authenticate with device biometrics
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: "Authenticate to access your account",
+      fallbackLabel: "Use passcode",
+      disableDeviceFallback: false,
+    });
+
+    if (!result.success) {
+      return;
+    }
+
+    // Get current device data
+    const deviceData = await getDeviceData();
+
+    // After successful biometric authentication, get tokens from backend
+    const response = await client.mutate({
+      mutation: BIOMETRIC_AUTH_MUTATION,
+      variables: {
+        input: {
+          deviceId: deviceData.deviceId,
+          deviceName: deviceData.deviceName,
+          deviceType: deviceData.deviceType,
+          biometricType: deviceData.biometricType,
+        },
+      },
+    });
+
+    const { accessToken, refreshToken } = response.data.signInWithBiometric;
+
+    const usrResp = await client.query({
+      query: GET_USER_QUERY,
+      context: {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      },
+    });
+
+    // Store the tokens and user data
+    await storeAccessToken(accessToken);
+    await storeRefreshToken(refreshToken);
+    await storeUserData(usrResp.data.currentUser);
+    setUser(usrResp.data.currentUser);
+  };
+
   // Register function
   const register = async (nif: string, pin: string, name: string) => {
+    const deviceData = await getDeviceData();
+
     try {
       setIsLoading(true);
 
       const response = await client.mutate({
         mutation: SIGN_UP_MUTATION,
-        variables: { input: { nif, password: pin, name } },
+        variables: {
+          input: {
+            nif,
+            password: pin,
+            name,
+            isMobile: true,
+            isAdmin: false,
+            deviceId: deviceData.deviceId,
+            deviceName: deviceData.deviceName,
+            deviceType: deviceData.deviceType,
+            modelName: deviceData.modelName,
+            biometricType: deviceData.biometricType,
+          },
+        },
       });
 
       if (!response.data.signUp.success) {
@@ -214,6 +310,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         register,
+        biometricLogin,
       }}
     >
       {children}

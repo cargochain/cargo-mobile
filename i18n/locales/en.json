@@ -20,7 +20,8 @@
         "addPhotos": "Add Photos",
         "trackingCode": "Tracking Code",
         "help_center": "Help Center",
-        "back": "Back"
+        "back": "Back",
+        "continue": "Continue"
     },
     "welcome": {
         "title": "Welcome to DMS",
@@ -41,14 +42,35 @@
         "haveAccount": "Already have an account?",
         "loggingIn": "Logging in...",
         "registering": "Registering...",
+        "enterPin": "Enter your PIN to continue",
+        "button": {
+            "continue": "Continue",
+            "login": "Login"
+        },
+        "labels": {
+            "name": "Full Name",
+            "nif": "NIF Number",
+            "pin": "PIN Code",
+            "confirmPin": "Confirm PIN",
+            "phoneNumber": "Phone Number"
+        },
         "errors": {
             "fillAllFields": "Please fill in all fields",
             "invalidNif": "NIF must be 9 digits",
             "invalidPin": "PIN must be 4 digits",
             "passwordsDontMatch": "Passwords don't match",
             "invalidCredentials": "Invalid NIF or PIN",
-            "registrationFailed": "Registration failed. Please try again."
-        }
+            "registrationFailed": "Registration failed. Please try again.",
+            "pinsDontMatch": "PINs don't match"
+        },
+        "loginWithBiometrics": "Login with Biometrics",
+        "createPin": "Create PIN",
+        "confirmPin": "Confirm PIN",
+        "createPinDescription": "Enter a 4-digit PIN to secure your account",
+        "confirmPinDescription": "Enter the same PIN again to confirm",
+        "phoneNumber": "Phone Number",
+        "loginWithAppleID": "Login with Apple ID",
+        "createAccount": "Create Account"
     },
     "home": {
         "title": "Home",

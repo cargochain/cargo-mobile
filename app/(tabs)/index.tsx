@@ -13,12 +13,11 @@ import { useRouter } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
-import {
-  SearchShipmentsQuery,
-  SearchShipmentsQueryResult,
-} from "@/services/generated/graphql";
+import { SearchShipmentsQuery } from "@/services/generated/graphql";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useAuth } from "@/services/authContext";
+import { useEffect, useMemo } from "react";
+import { getDeviceMetadata } from "@/services/secureStorage";
 
 const GET_SHIPMENTS = gql`
   query SearchShipments($input: ShipmentSearchInput!) {
@@ -54,7 +53,11 @@ export default function ShipmentsScreen() {
     }
   );
 
-  console.log(data);
+  useEffect(() => {
+    getDeviceMetadata().then((metadata) => {
+      console.log("metadata", metadata);
+    });
+  }, []);
 
   const getStatusLabel = (status: string) => {
     switch (status) {

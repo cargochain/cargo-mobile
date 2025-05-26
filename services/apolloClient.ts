@@ -6,14 +6,15 @@ import {
   getAccessToken,
   getRefreshToken,
   storeAccessToken,
+  storeRefreshToken,
   clearAuthData,
 } from "./secureStorage";
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
 // Mock GraphQL endpoint - replace with your actual endpoint
-const API_URL = "http://localhost:8080/graphql";
-// const API_URL = "https://21cf-89-181-200-235.ngrok-free.app/graphql";
-//
+// const API_URL = "http://localhost:8080/graphql";
+const API_URL = "https://bba5-87-196-55-109.ngrok-free.app/graphql";
+
 // Create Upload link for file uploads
 const uploadLink = createUploadLink({
   uri: API_URL,
@@ -29,38 +30,62 @@ const REFRESH_TOKEN_MUTATION = gql`
   }
 `;
 
+let isRefreshing = false;
+let pendingRequests: any[] = [];
+
 // Function to refresh token and retry the operation
 const refreshTokenAndRetry = async (operation: any) => {
   try {
+    console.log("refreshTokenAndRetry");
     const refreshToken = await getRefreshToken();
     if (!refreshToken) {
       await clearAuthData();
       return null;
     }
+
+    // If a refresh is already in progress, queue this request
+    if (isRefreshing) {
+      return new Promise((resolve) => {
+        pendingRequests.push(() => resolve(operation));
+      });
+    }
+
+    isRefreshing = true;
+
     // Use a temporary ApolloClient instance to avoid circular dependency
     const tempClient = new ApolloClient({
       link: uploadLink,
       cache: new InMemoryCache(),
     });
+
     const response = await tempClient.mutate({
       mutation: REFRESH_TOKEN_MUTATION,
-      context: {
-        headers: {
-          authorization: `Bearer ${refreshToken}`,
-        },
-      },
+      variables: { refreshToken },
     });
-    const data = response.data.refreshToken;
-    if (data.accessToken) {
-      await storeAccessToken(data.accessToken);
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      response.data.refreshToken;
+
+    if (accessToken && newRefreshToken) {
+      // Store both new tokens
+      await storeAccessToken(accessToken);
+      await storeRefreshToken(newRefreshToken);
+
       // Update the operation context with the new token
       const oldHeaders = operation.getContext().headers;
       operation.setContext({
         headers: {
           ...oldHeaders,
-          authorization: `Bearer ${data.accessToken}`,
+          authorization: `Bearer ${accessToken}`,
         },
       });
+
+      // Process any pending requests
+      pendingRequests.forEach((callback) => callback());
+      pendingRequests = [];
+      isRefreshing = false;
+
+      console.log("refreshTokenAndRetry success");
       return true;
     } else {
       await clearAuthData();
@@ -69,6 +94,8 @@ const refreshTokenAndRetry = async (operation: any) => {
   } catch (error) {
     console.error("Error refreshing token:", error);
     await clearAuthData();
+    isRefreshing = false;
+    pendingRequests = [];
     return null;
   }
 };
@@ -89,20 +116,24 @@ const errorLink = onError(
   ({ graphQLErrors, networkError, operation, forward }) => {
     if (graphQLErrors) {
       for (const err of graphQLErrors) {
-        if (err.extensions?.code === "UNAUTHENTICATED") {
+        if (err.message === "unauthorized") {
           // Return a new Observable that waits for token refresh and retries
-          return new Observable((observer: any) => {
+          return new Observable((observer) => {
             (async () => {
-              const refreshed = await refreshTokenAndRetry(operation);
-              if (refreshed) {
-                // Retry the request with the new token
-                forward(operation).subscribe({
-                  next: observer.next.bind(observer),
-                  error: observer.error.bind(observer),
-                  complete: observer.complete.bind(observer),
-                });
-              } else {
-                observer.error(err);
+              try {
+                const refreshed = await refreshTokenAndRetry(operation);
+                if (refreshed) {
+                  // Retry the request with the new token
+                  forward(operation).subscribe({
+                    next: observer.next.bind(observer),
+                    error: observer.error.bind(observer),
+                    complete: observer.complete.bind(observer),
+                  });
+                } else {
+                  observer.error(new Error("Authentication failed"));
+                }
+              } catch (error) {
+                observer.error(error);
               }
             })();
           });

@@ -12,6 +12,7 @@ import { Colors } from "@/constants/Colors";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { changeLanguage, getAvailableLanguages } from "@/i18n";
 import { useAuth } from "@/services/authContext";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
@@ -78,8 +79,12 @@ export default function SettingsScreen() {
           </View>
         </View>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t("settings.logout")}</Text>
-          <TouchableOpacity onPress={handleLogout}>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <FontAwesome
+              name="sign-out"
+              size={24}
+              color={Colors.light.primary}
+            />
             <Text style={styles.sectionTitle}>{t("settings.logout")}</Text>
           </TouchableOpacity>
         </View>
@@ -169,5 +174,10 @@ const styles = StyleSheet.create({
   },
   selectedLanguageText: {
     color: Colors.light.white,
+  },
+  logoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
 });

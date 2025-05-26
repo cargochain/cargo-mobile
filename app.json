@@ -15,6 +15,7 @@
         "ITSAppUsesNonExemptEncryption": false,
         "NSCameraUsageDescription": "This app needs access to your camera to take photos of the shipment.",
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to save photos of the shipment.",
+        "NSFaceIDUsageDescription": "This app uses Face ID to securely authenticate you.",
         "LSApplicationQueriesSchemes": [
           "whatsapp"
         ]

@@ -20,7 +20,11 @@
         "addPhotos": "Adicionar Fotos",
         "help_center": "Centro de Ajuda",
         "trackingCode": "Código de Rastreio",
-        "back": "Voltar"
+        "back": "Voltar",
+        "continue": "Continuar",
+        "assigned": "Atribuído",
+        "inTransit": "Em Trânsito",
+        "delivered": "Entregue"
     },
     "welcome": {
         "title": "Bem-vindo",
@@ -29,30 +33,39 @@
         "register": "Registrar"
     },
     "auth": {
-        "login": "Digite seu NIF e PIN para entrar",
-        "register": "Registrar",
+        "login": "Entrar",
+        "register": "Registar",
         "nif": "NIF",
         "pin": "PIN",
-        "email": "E-mail",
-        "password": "Senha",
-        "confirmPassword": "Confirmar Senha",
+        "email": "Email",
+        "password": "Palavra-passe",
+        "confirmPassword": "Confirmar palavra-passe",
         "name": "Nome",
         "noAccount": "Não tem uma conta?",
         "haveAccount": "Já tem uma conta?",
-        "loggingIn": "Entrando...",
-        "registering": "Registrando...",
-        "createAccount": "Criar conta",
+        "loggingIn": "A entrar...",
+        "registering": "A registar...",
+        "enterPin": "Digite o seu PIN para continuar",
+        "labels": {
+            "name": "Nome completo",
+            "nif": "Número de NIF",
+            "pin": "Código PIN",
+            "confirmPin": "Confirmar PIN"
+        },
         "errors": {
             "fillAllFields": "Por favor, preencha todos os campos",
-            "invalidNif": "NIF deve ter 9 dígitos",
-            "invalidPin": "PIN deve ter 4 dígitos",
-            "passwordsDontMatch": "As senhas não coincidem",
-            "invalidCredentials": "NIF ou PIN inválidos",
-            "registrationFailed": "Falha no registro. Por favor, tente novamente."
+            "invalidNif": "O NIF deve ter 9 dígitos",
+            "invalidPin": "O PIN deve ter 4 dígitos",
+            "passwordsDontMatch": "As palavras-passe não coincidem",
+            "invalidCredentials": "NIF ou PIN inválido",
+            "registrationFailed": "Erro no registo. Por favor, tente novamente.",
+            "pinsDontMatch": "Os PINs não coincidem"
         },
-        "button": {
-            "login": "Entrar"
-        }
+        "loginWithBiometrics": "Entrar com biometria",
+        "createPin": "Criar PIN",
+        "confirmPin": "Confirmar PIN",
+        "createPinDescription": "Digite um PIN de 4 dígitos para proteger sua conta",
+        "confirmPinDescription": "Digite o mesmo PIN novamente para confirmar"
     },
     "home": {
         "title": "Início",

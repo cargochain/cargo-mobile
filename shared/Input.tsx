@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useCallback, memo } from "react";
 import {
   View,
   TextInput,
@@ -68,7 +68,7 @@ export interface InputProps extends Omit<TextInputProps, "style"> {
   onClear?: () => void;
 }
 
-export const Input: React.FC<InputProps> = ({
+const InputComponent: React.FC<InputProps> = ({
   label,
   error,
   helper,
@@ -87,43 +87,76 @@ export const Input: React.FC<InputProps> = ({
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const showClearButton =
-    clearable && value && value.length > 0 && !disabled && !loading;
 
-  const handleClear = () => {
+  const showClearButton = useMemo(
+    () => clearable && value && value.length > 0 && !disabled && !loading,
+    [clearable, value, disabled, loading]
+  );
+
+  const handleClear = useCallback(() => {
     if (onChangeText) {
       onChangeText("");
     }
     if (onClear) {
       onClear();
     }
-  };
+  }, [onChangeText, onClear]);
+
+  const handleFocus = useCallback(() => {
+    setIsFocused(true);
+  }, []);
+
+  const handleBlur = useCallback(() => {
+    setIsFocused(false);
+  }, []);
+
+  const containerStyles = useMemo(
+    () => [styles.container, containerStyle],
+    [containerStyle]
+  );
+
+  const inputContainerStyles = useMemo(
+    () => [
+      styles.inputContainer,
+      isFocused && styles.focusedInput,
+      error && styles.errorInput,
+      disabled && styles.disabledInput,
+    ],
+    [isFocused, error, disabled]
+  );
+
+  const inputStyles = useMemo(
+    () => [styles.input, disabled && styles.disabledText, inputStyle],
+    [disabled, inputStyle]
+  );
+
+  const labelStyles = useMemo(() => [styles.label, labelStyle], [labelStyle]);
+
+  const errorStyles = useMemo(() => [styles.error, errorStyle], [errorStyle]);
+
+  const helperStyles = useMemo(
+    () => [styles.helper, helperStyle],
+    [helperStyle]
+  );
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={containerStyles}>
       {label && (
         <View style={styles.labelContainer}>
-          <Text style={[styles.label, labelStyle]}>
+          <Text style={labelStyles}>
             {label}
             {required && <Text style={styles.required}> *</Text>}
           </Text>
         </View>
       )}
 
-      <View
-        style={[
-          styles.inputContainer,
-          isFocused && styles.focusedInput,
-          error && styles.errorInput,
-          disabled && styles.disabledInput,
-        ]}
-      >
+      <View style={inputContainerStyles}>
         <TextInput
-          style={[styles.input, disabled && styles.disabledText, inputStyle]}
+          style={inputStyles}
           value={value}
           onChangeText={onChangeText}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           editable={!disabled && !loading}
           placeholderTextColor="#999"
           {...rest}
@@ -148,15 +181,33 @@ export const Input: React.FC<InputProps> = ({
 
       {(error || helper) && (
         <View style={styles.messageContainer}>
-          {error && <Text style={[styles.error, errorStyle]}>{error}</Text>}
-          {helper && !error && (
-            <Text style={[styles.helper, helperStyle]}>{helper}</Text>
-          )}
+          {error && <Text style={errorStyles}>{error}</Text>}
+          {helper && !error && <Text style={helperStyles}>{helper}</Text>}
         </View>
       )}
     </View>
   );
 };
+
+// Memoize the entire component
+export const Input = memo(InputComponent, (prevProps, nextProps) => {
+  // Custom comparison function to determine if re-render is needed
+  return (
+    prevProps.value === nextProps.value &&
+    prevProps.error === nextProps.error &&
+    prevProps.helper === nextProps.helper &&
+    prevProps.loading === nextProps.loading &&
+    prevProps.disabled === nextProps.disabled &&
+    prevProps.clearable === nextProps.clearable &&
+    prevProps.required === nextProps.required &&
+    prevProps.label === nextProps.label &&
+    prevProps.containerStyle === nextProps.containerStyle &&
+    prevProps.inputStyle === nextProps.inputStyle &&
+    prevProps.labelStyle === nextProps.labelStyle &&
+    prevProps.errorStyle === nextProps.errorStyle &&
+    prevProps.helperStyle === nextProps.helperStyle
+  );
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -176,10 +227,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: Colors.light.primary,
-    borderRadius: 10,
-    backgroundColor: Colors.light.secondary,
+    borderRadius: 16,
+    backgroundColor: Colors.light.background,
   },
   input: {
     flex: 1,

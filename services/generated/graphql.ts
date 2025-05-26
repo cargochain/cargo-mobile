@@ -72,6 +72,7 @@ export type Mutation = {
   createShipment: Shipment;
   refreshToken: RefreshTokenResponse;
   signIn: UserSignInResponse;
+  signInWithBiometric: UserSignInResponse;
   signUp: UserSignUpResponse;
   startDelivery: Shipment;
   uploadShipmentBase64Files: Shipment;
@@ -106,6 +107,11 @@ export type MutationRefreshTokenArgs = {
 
 export type MutationSignInArgs = {
   input: UserSignInInput;
+};
+
+
+export type MutationSignInWithBiometricArgs = {
+  input: UserSignInWithBiometricInput;
 };
 
 
@@ -230,9 +236,19 @@ export type UserSignInResponse = {
   refreshToken: Scalars['String']['output'];
 };
 
+export type UserSignInWithBiometricInput = {
+  biometricType: Scalars['String']['input'];
+  nif: Scalars['String']['input'];
+};
+
 export type UserSignUpInput = {
+  biometricType?: InputMaybe<Scalars['String']['input']>;
+  deviceId?: InputMaybe<Scalars['String']['input']>;
+  deviceName?: InputMaybe<Scalars['String']['input']>;
+  deviceType?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   isAdmin: Scalars['Boolean']['input'];
+  isMobile: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   nif: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -305,6 +321,13 @@ export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'CurrentUser', id: string, email: string, name: string } | null };
+
+export type BiometricAuthMutationVariables = Exact<{
+  input: UserSignInWithBiometricInput;
+}>;
+
+
+export type BiometricAuthMutation = { __typename?: 'Mutation', signInWithBiometric: { __typename?: 'UserSignInResponse', accessToken: string, refreshToken: string } };
 
 
 export const SearchShipmentsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchShipments"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ShipmentSearchInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"shipments"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"company"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode;
@@ -570,3 +593,30 @@ export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
 export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
 export type GetUserSuspenseQueryHookResult = ReturnType<typeof useGetUserSuspenseQuery>;
 export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export const BiometricAuthDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"BiometricAuth"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserSignInWithBiometricInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signInWithBiometric"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"}}]}}]}}]} as unknown as DocumentNode;
+export type BiometricAuthMutationFn = Apollo.MutationFunction<BiometricAuthMutation, BiometricAuthMutationVariables>;
+
+/**
+ * __useBiometricAuthMutation__
+ *
+ * To run a mutation, you first call `useBiometricAuthMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBiometricAuthMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [biometricAuthMutation, { data, loading, error }] = useBiometricAuthMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useBiometricAuthMutation(baseOptions?: Apollo.MutationHookOptions<BiometricAuthMutation, BiometricAuthMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BiometricAuthMutation, BiometricAuthMutationVariables>(BiometricAuthDocument, options);
+      }
+export type BiometricAuthMutationHookResult = ReturnType<typeof useBiometricAuthMutation>;
+export type BiometricAuthMutationResult = Apollo.MutationResult<BiometricAuthMutation>;
+export type BiometricAuthMutationOptions = Apollo.BaseMutationOptions<BiometricAuthMutation, BiometricAuthMutationVariables>;

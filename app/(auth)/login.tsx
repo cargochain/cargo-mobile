@@ -13,6 +13,7 @@ import {
 import { Link, router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
+import * as LocalAuthentication from "expo-local-authentication";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -23,15 +24,50 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function LoginScreen() {
   const [nif, setNif] = useState("");
-  const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
+  const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
 
-  const { login } = useAuth();
+  const { biometricLogin } = useAuth();
   const { t, i18n } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
+
+  // Check if biometric authentication is available
+  useEffect(() => {
+    const checkBiometrics = async () => {
+      try {
+        const compatible = await LocalAuthentication.hasHardwareAsync();
+        const enrolled = await LocalAuthentication.isEnrolledAsync();
+
+        const supportedTypes =
+          await LocalAuthentication.supportedAuthenticationTypesAsync();
+
+        // Check if device has any supported biometric type
+        const hasSupportedBiometric =
+          supportedTypes.includes(
+            LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+          ) ||
+          supportedTypes.includes(
+            LocalAuthentication.AuthenticationType.FINGERPRINT
+          );
+
+        console.log("compatible", compatible);
+        console.log("enrolled", enrolled);
+        console.log("supportedTypes", supportedTypes);
+        console.log("hasSupportedBiometric", hasSupportedBiometric);
+
+        setIsBiometricAvailable(
+          compatible && enrolled && hasSupportedBiometric
+        );
+      } catch (error) {
+        console.error("Error checking biometric availability:", error);
+        setIsBiometricAvailable(false);
+      }
+    };
+    checkBiometrics();
+  }, []);
 
   // Set Portuguese as the default language on first load
   useEffect(() => {
@@ -40,26 +76,28 @@ export default function LoginScreen() {
     }
   }, []);
 
-  const handleLogin = async () => {
+  const handleContinue = () => {
     // Validate NIF (9 digits)
     if (!nif || nif.length !== 9 || !/^\d{9}$/.test(nif)) {
       setError(t("auth.errors.invalidNif"));
       return;
     }
 
-    // Validate PIN (4 digits)
-    if (!pin || pin.length !== 4 || !/^\d{4}$/.test(pin)) {
-      setError(t("auth.errors.invalidPin"));
-      return;
-    }
+    // Navigate to login PIN screen
+    router.push({
+      pathname: "/(auth)/login-pin",
+      params: { nif },
+    });
+  };
 
+  const handleBiometricLogin = async () => {
     try {
       setIsLoading(true);
       setError("");
-      await login(nif, pin);
+      await biometricLogin();
     } catch (err) {
-      console.error("Login error:", err);
-      setError(t("auth.errors.invalidCredentials"));
+      console.error("Biometric login error:", err);
+      setError(t("auth.errors.biometricFailed"));
     } finally {
       setIsLoading(false);
     }
@@ -81,12 +119,13 @@ export default function LoginScreen() {
     i18n.changeLanguage(languageCode);
   };
 
+  console.log("isBiometricAvailable", isBiometricAvailable);
+
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView
         style={[styles.container, { backgroundColor: colors.secondary }]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
         <View style={styles.headerContainer}>
           <TouchableOpacity
@@ -103,84 +142,75 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          keyboardShouldPersistTaps="handled"
-        >
-          <ThemedView style={styles.content}>
-            <Text style={styles.title}>{t("auth.login")}</Text>
+        <ThemedView style={styles.content}>
+          <Text style={styles.title}>{t("auth.login")}</Text>
 
-            {error ? (
-              <ThemedText style={[styles.errorText, { color: colors.error }]}>
-                {error}
-              </ThemedText>
-            ) : null}
+          {error ? (
+            <ThemedText style={[styles.errorText, { color: colors.error }]}>
+              {error}
+            </ThemedText>
+          ) : null}
 
-            <View style={styles.inputContainer}>
-              <Input
-                placeholder={t("auth.nif")}
-                value={nif}
-                onChangeText={setNif}
-                keyboardType="numeric"
-                maxLength={9}
-                disabled={isLoading}
-                clearable
-                required
-                containerStyle={{ borderColor: colors.primary }}
-              />
-              {/* <MaskedTextInput
-                mask="999 999 999"
-                onChangeText={(text, rawText) => {
-                  setNif(rawText); // unmasked
-                }}
-                value={nif}
-                keyboardType="numeric"
-                placeholder={t("auth.nif")}
-                style={{
-                  borderColor: colors.primary,
-                  borderWidth: 1,
-                  borderRadius: 10,
-                  height: 50,
-                  paddingHorizontal: 15,
-                }}
-              /> */}
+          <View style={styles.inputContainer}>
+            <Input
+              placeholder={t("auth.nif")}
+              value={nif}
+              onChangeText={setNif}
+              keyboardType="numeric"
+              maxLength={9}
+              disabled={isLoading}
+              clearable
+              required
+              containerStyle={{ borderColor: colors.primary }}
+            />
+          </View>
 
-              <Input
-                placeholder={t("auth.pin")}
-                value={pin}
-                onChangeText={setPin}
-                secureTextEntry
-                keyboardType="numeric"
-                maxLength={4}
-                disabled={isLoading}
-                required
-                containerStyle={{ borderColor: colors.primary }}
-              />
-            </View>
+          <Button
+            title={t("common.continue")}
+            onPress={handleContinue}
+            loading={isLoading}
+            disabled={isLoading}
+            variant="primary"
+            size="large"
+            style={{ backgroundColor: colors.primary }}
+          />
 
+          {isBiometricAvailable && (
             <Button
-              title={isLoading ? t("auth.loggingIn") : t("auth.button.login")}
-              onPress={handleLogin}
+              title={
+                Platform.OS === "ios"
+                  ? t("auth.loginWithAppleID")
+                  : t("auth.loginWithBiometrics")
+              }
+              onPress={handleBiometricLogin}
               loading={isLoading}
               disabled={isLoading}
-              variant="primary"
+              variant="outline"
               size="large"
-              style={{ backgroundColor: colors.primary }}
-            />
+              style={{ marginTop: 10, borderColor: colors.primary }}
+              textStyle={{ color: colors.primary }}
+            >
+              <Ionicons
+                name={Platform.OS === "ios" ? "logo-apple" : "finger-print"}
+                size={24}
+                color={colors.primary}
+                style={{ marginRight: 8 }}
+              />
+            </Button>
+          )}
 
-            <View style={styles.footer}>
-              <Link href="/(auth)/register" replace asChild>
-                <Button
-                  title={t("auth.createAccount")}
-                  onPress={() => {}}
-                  variant="text"
-                  size="medium"
-                  textStyle={{ color: colors.primary }}
-                />
-              </Link>
-            </View>
-          </ThemedView>
-        </ScrollView>
+          <View style={styles.footer}>
+            <Link href="/(auth)/register" replace asChild>
+              <Button
+                title={t("auth.createAccount")}
+                onPress={() => {}}
+                variant="text"
+                size="medium"
+                textStyle={{ color: colors.primary }}
+              />
+            </Link>
+          </View>
+        </ThemedView>
 
         <LanguageSelector
           visible={languageModalVisible}

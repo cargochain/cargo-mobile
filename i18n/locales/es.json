@@ -16,29 +16,43 @@
         "selectPhotos": "Seleccionar Fotos",
         "addPhotos": "Agregar Fotos",
         "trackingCode": "Código de Rastreio",
-        "help_center": "Centro de Ayuda"
+        "help_center": "Centro de Ayuda",
+        "continue": "Continuar"
     },
     "auth": {
-        "login": "Iniciar Sesión",
+        "login": "Iniciar sesión",
         "register": "Registrarse",
         "nif": "NIF",
         "pin": "PIN",
-        "email": "Correo Electrónico",
+        "email": "Correo electrónico",
         "password": "Contraseña",
-        "confirmPassword": "Confirmar Contraseña",
+        "confirmPassword": "Confirmar contraseña",
         "name": "Nombre",
         "noAccount": "¿No tienes una cuenta?",
         "haveAccount": "¿Ya tienes una cuenta?",
         "loggingIn": "Iniciando sesión...",
         "registering": "Registrando...",
+        "enterPin": "Ingrese su PIN para continuar",
+        "labels": {
+            "name": "Nombre completo",
+            "nif": "Número de NIF",
+            "pin": "Código PIN",
+            "confirmPin": "Confirmar PIN"
+        },
         "errors": {
             "fillAllFields": "Por favor, complete todos los campos",
             "invalidNif": "El NIF debe tener 9 dígitos",
             "invalidPin": "El PIN debe tener 4 dígitos",
             "passwordsDontMatch": "Las contraseñas no coinciden",
-            "invalidCredentials": "NIF o PIN inválidos",
-            "registrationFailed": "Error en el registro. Por favor, inténtelo de nuevo."
-        }
+            "invalidCredentials": "NIF o PIN inválido",
+            "registrationFailed": "Error en el registro. Por favor, inténtelo de nuevo.",
+            "pinsDontMatch": "Los PINs no coinciden"
+        },
+        "loginWithBiometrics": "Iniciar sesión con biometría",
+        "createPin": "Crear PIN",
+        "confirmPin": "Confirmar PIN",
+        "createPinDescription": "Ingrese un PIN de 4 dígitos para proteger su cuenta",
+        "confirmPinDescription": "Ingrese el mismo PIN nuevamente para confirmar"
     },
     "home": {
         "title": "Inicio",

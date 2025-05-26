@@ -9,6 +9,7 @@ import {
   Platform,
   Pressable,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -133,6 +134,19 @@ export default function ShipmentDetailsScreen() {
     return <ThemedText>{t("Shipment not found")}</ThemedText>;
   }
 
+  const getShipmentStatusLabel = (status: string) => {
+    switch (status) {
+      case "ASSIGNED":
+        return t("common.assigned");
+      case "IN_TRANSIT":
+        return t("common.inTransit");
+      case "DELIVERED":
+        return t("common.delivered");
+      default:
+        return "";
+    }
+  };
+
   const renderActionButton = () => {
     switch (shipment.status) {
       case "ASSIGNED":
@@ -237,16 +251,17 @@ export default function ShipmentDetailsScreen() {
         );
 
         // Call the GraphQL mutation
-        await uploadShipmentBase64Files({
+        uploadShipmentBase64Files({
           variables: {
             input: {
               shipmentId: shipment.id,
               files,
             },
           },
+        }).then(() => {
+          alert(t("Images uploaded successfully!"));
         });
 
-        alert(t("Images uploaded successfully!"));
         setImages([]); // Clear images after successful upload
         onClose(); // Close the modal
       } catch (error) {
@@ -312,10 +327,14 @@ export default function ShipmentDetailsScreen() {
       }
       return (
         <Button
-          title={t("Continue")}
+          title={
+            uploadShipmentBase64FilesLoading ? t("Uploading...") : t("Continue")
+          }
           onPress={uploadImages}
           variant="primary"
           size="medium"
+          loading={uploadShipmentBase64FilesLoading}
+          disabled={uploadShipmentBase64FilesLoading}
         />
       );
     };
@@ -324,15 +343,40 @@ export default function ShipmentDetailsScreen() {
       <Modal visible={isVisible} onRequestClose={onClose}>
         <SafeAreaView style={styles.imageSelectorModalWrapper}>
           <View style={styles.imageSelectorModalOptions}>
-            <TouchableOpacity onPress={onClose} style={styles.addPhotosButton}>
-              <Text style={styles.addPhotosButtonText}>{t("Cancel")}</Text>
+            <TouchableOpacity
+              onPress={onClose}
+              style={styles.addPhotosButton}
+              disabled={uploadShipmentBase64FilesLoading}
+            >
+              <Text
+                style={[
+                  styles.addPhotosButtonText,
+                  uploadShipmentBase64FilesLoading && styles.disabledText,
+                ]}
+              >
+                {t("Cancel")}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={pickImage}
               style={styles.addPhotosButton}
+              disabled={uploadShipmentBase64FilesLoading}
             >
-              <FontAwesome6 name="images" size={18} color={Colors.light.info} />
-              <Text style={styles.addPhotosButtonText}>
+              <FontAwesome6
+                name="images"
+                size={18}
+                color={
+                  uploadShipmentBase64FilesLoading
+                    ? Colors.light.text + "80"
+                    : Colors.light.info
+                }
+              />
+              <Text
+                style={[
+                  styles.addPhotosButtonText,
+                  uploadShipmentBase64FilesLoading && styles.disabledText,
+                ]}
+              >
                 {t("common.selectPhotos")}
               </Text>
             </TouchableOpacity>
@@ -350,6 +394,14 @@ export default function ShipmentDetailsScreen() {
 
   return (
     <SafeAreaView style={styles.wrapper}>
+      {uploadShipmentBase64FilesLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={Colors.light.white} />
+          <ThemedText style={styles.loadingText}>
+            {t("Uploading files...")}
+          </ThemedText>
+        </View>
+      )}
       <View style={styles.header}>
         <View style={styles.headerTitleContainer}>
           <TouchableOpacity
@@ -367,16 +419,21 @@ export default function ShipmentDetailsScreen() {
             {t("common.trackingCode")}:
           </Text>
           <Text style={styles.headerTitleValue}>{shipment.trackingCode}</Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => setIsImageSelectorModalVisible(true)}
-          style={styles.addPhotosButton}
-        >
-          <FontAwesome6 name="plus" size={18} color={Colors.light.info} />
-          <Text style={styles.addPhotosButtonText}>
-            {t("common.addPhotos")}
+          <Text style={styles.headerTitleLabel}>
+            {getShipmentStatusLabel(shipment.status)}
           </Text>
-        </TouchableOpacity>
+        </View>
+        {shipment.status === "IN_TRANSIT" && (
+          <TouchableOpacity
+            onPress={() => setIsImageSelectorModalVisible(true)}
+            style={styles.addPhotosButton}
+          >
+            <FontAwesome6 name="plus" size={18} color={Colors.light.info} />
+            <Text style={styles.addPhotosButtonText}>
+              {t("common.addPhotos")}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View style={styles.container}>
         <View style={styles.photos}>
@@ -582,5 +639,24 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.3)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  disabledText: {
+    color: Colors.light.text + "80",
+  },
+  loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+  },
+  loadingText: {
+    color: Colors.light.white,
+    marginTop: 12,
+    fontSize: 16,
   },
 });
