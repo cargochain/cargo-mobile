@@ -19,7 +19,7 @@ import { PinInput } from "@/shared/PinInput";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Fonts } from "@/constants/Fonts";
-import { useSignUpMutation } from "@/services/generated/graphql";
+import { useAuth } from "@/services/authContext";
 
 export default function PinConfirmationScreen() {
   const [pin, setPin] = useState("");
@@ -27,15 +27,16 @@ export default function PinConfirmationScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  const { name, nif, previousPin } = useLocalSearchParams<{
+  const { name, previousPin, email } = useLocalSearchParams<{
     name: string;
-    nif: string;
+    email: string;
     previousPin: string;
   }>();
+  console.log("pin-confirmation", name, email, previousPin);
   const { t } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
-  const [signUp] = useSignUpMutation();
+  const { register } = useAuth();
 
   const handlePinChange = useCallback((value: string) => {
     setPin(value);
@@ -43,55 +44,49 @@ export default function PinConfirmationScreen() {
   }, []);
 
   const validatePin = useCallback(() => {
+    console.log("Validating pin:", { pin, previousPin, pinLength: pin.length });
+
     if (pin.length !== 4) {
+      console.log("Pin length validation failed");
       setError(t("auth.errors.invalidPin"));
       return false;
     }
-    return true;
-  }, [pin, t]);
-
-  const handleSignUp = useCallback(async () => {
-    if (!validatePin()) return;
 
     if (pin !== previousPin) {
+      console.log("Pin match validation failed");
       setError(t("auth.errors.pinsDontMatch"));
+      return false;
+    }
+
+    console.log("Pin validation successful");
+    return true;
+  }, [pin, previousPin, t]);
+
+  const handleSignUp = useCallback(async () => {
+    console.log("Starting sign up process...", {
+      email,
+      name,
+      pinLength: pin.length,
+    });
+    if (!validatePin()) {
+      console.log("Pin validation failed, aborting sign up");
       return;
     }
 
+    console.log("Registering user...", { email, pin, name });
     try {
       setIsLoading(true);
       setError("");
-
-      const { data } = await signUp({
-        variables: {
-          input: {
-            name,
-            nif,
-            password: pin,
-            email: `${nif}@cargochain.pt`, // Using NIF as email since it's required
-            phoneNumber: "", // This will be updated later
-            isAdmin: false,
-            isMobile: true,
-            deviceType: Platform.OS,
-            deviceName: Platform.OS,
-            deviceId: Platform.OS,
-          },
-        },
-      });
-
-      if (data?.signUp.success) {
-        // Navigate to login screen after successful registration
-        router.replace("/(auth)/login");
-      } else {
-        setError(t("auth.errors.registrationFailed"));
-      }
+      await register(email, pin, name);
+      console.log("Registration successful, redirecting...");
+      router.replace("/(auth)/sucessfull-registration");
     } catch (err) {
       console.error("Sign up error:", err);
       setError(t("auth.errors.registrationFailed"));
     } finally {
       setIsLoading(false);
     }
-  }, [pin, previousPin, name, nif, t, validatePin, signUp]);
+  }, [pin, previousPin, name, email, t, validatePin, register]);
 
   const dismissKeyboard = useCallback(() => {
     Keyboard.dismiss();

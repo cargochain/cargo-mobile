@@ -18,28 +18,22 @@ import { PinInput } from "@/shared/PinInput";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Fonts } from "@/constants/Fonts";
-import { useAuth } from "@/services/authContext";
 
 export default function PinScreen() {
   const [pin, setPin] = useState("");
-  const [confirmPin, setConfirmPin] = useState("");
   const [error, setError] = useState("");
-  const [isConfirming, setIsConfirming] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { name, nif } = useLocalSearchParams<{ name: string; nif: string }>();
+  const { name, email } = useLocalSearchParams<{
+    name: string;
+    email: string;
+  }>();
   const { t } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
-  const { register } = useAuth();
 
   const handlePinChange = useCallback((value: string) => {
     setPin(value);
-    setError("");
-  }, []);
-
-  const handleConfirmPinChange = useCallback((value: string) => {
-    setConfirmPin(value);
     setError("");
   }, []);
 
@@ -54,30 +48,24 @@ export default function PinScreen() {
   const handleContinue = useCallback(async () => {
     if (!validatePin()) return;
 
-    if (!isConfirming) {
-      setIsConfirming(true);
-      return;
-    }
-
-    if (pin !== confirmPin) {
-      setError(t("auth.errors.pinsDontMatch"));
-      return;
-    }
-
     try {
-      setIsLoading(true);
-      await register(nif, pin, name);
+      router.push({
+        pathname: "/(auth)/register-pin-confirmation",
+        params: {
+          name,
+          email,
+          previousPin: pin,
+        },
+      });
       // Registration successful, user will be automatically redirected by the auth context
     } catch (err) {
       console.error("Register error:", err);
       setError(t("auth.errors.registrationFailed"));
-      setIsConfirming(false);
       setPin("");
-      setConfirmPin("");
     } finally {
       setIsLoading(false);
     }
-  }, [pin, confirmPin, isConfirming, name, nif, t, validatePin, register]);
+  }, [pin, name, email, t, validatePin]);
 
   const dismissKeyboard = useCallback(() => {
     Keyboard.dismiss();
@@ -103,13 +91,11 @@ export default function PinScreen() {
             type="title"
             style={[styles.title, { color: colors.text }]}
           >
-            {isConfirming ? t("auth.confirmPin") : t("auth.createPin")}
+            {t("auth.createPin")}
           </ThemedText>
 
           <ThemedText style={[styles.subtitle, { color: colors.text }]}>
-            {isConfirming
-              ? t("auth.confirmPinDescription")
-              : t("auth.createPinDescription")}
+            {t("auth.createPinDescription")}
           </ThemedText>
 
           {error ? (
@@ -120,10 +106,8 @@ export default function PinScreen() {
 
           <View style={styles.pinContainer}>
             <PinInput
-              value={isConfirming ? confirmPin : pin}
-              onChangeText={
-                isConfirming ? handleConfirmPinChange : handlePinChange
-              }
+              value={pin}
+              onChangeText={handlePinChange}
               error={!!error}
             />
           </View>

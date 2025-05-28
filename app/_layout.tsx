@@ -14,7 +14,7 @@ import { client } from "@/services/apolloClient";
 import { AuthProvider, useAuth } from "@/services/authContext";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
-import { checkBiometricSetup, setupBiometric } from "@/services/biometricSetup";
+// import { checkBiometricSetup, setupBiometric } from "@/services/biometricSetup";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -24,9 +24,7 @@ function RootLayoutNav() {
 
   useEffect(() => {
     const checkBiometric = async () => {
-      console.log("checkBiometric");
       if (!user?.id) return;
-      console.log("[@@user]", user);
 
       try {
         // Check if device supports biometric authentication
@@ -121,39 +119,39 @@ function RootLayoutNav() {
           }
         }
 
-        const hasBiometricEnabled = await checkBiometricSetup(user.nif);
-        if (!hasBiometricEnabled) {
-          Alert.alert(
-            "Enable Biometric Login",
-            "Would you like to enable biometric login for faster access?",
-            [
-              {
-                text: "Not Now",
-                style: "cancel",
-              },
-              {
-                text: "Enable",
-                onPress: async () => {
-                  try {
-                    const success = await setupBiometric(user.nif);
-                    if (!success) {
-                      Alert.alert(
-                        "Error",
-                        "Failed to setup biometric authentication"
-                      );
-                    }
-                  } catch (error) {
-                    console.error("Error setting up biometric:", error);
-                    Alert.alert(
-                      "Error",
-                      "Failed to setup biometric authentication"
-                    );
-                  }
-                },
-              },
-            ]
-          );
-        }
+        // const hasBiometricEnabled = await checkBiometricSetup(user.nif);
+        // if (!hasBiometricEnabled) {
+        //   Alert.alert(
+        //     "Enable Biometric Login",
+        //     "Would you like to enable biometric login for faster access?",
+        //     [
+        //       {
+        //         text: "Not Now",
+        //         style: "cancel",
+        //       },
+        //       {
+        //         text: "Enable",
+        //         onPress: async () => {
+        //           try {
+        //             const success = await setupBiometric(user.nif);
+        //             if (!success) {
+        //               Alert.alert(
+        //                 "Error",
+        //                 "Failed to setup biometric authentication"
+        //               );
+        //             }
+        //           } catch (error) {
+        //             console.error("Error setting up biometric:", error);
+        //             Alert.alert(
+        //               "Error",
+        //               "Failed to setup biometric authentication"
+        //             );
+        //           }
+        //         },
+        //       },
+        //     ]
+        //   );
+        // }
       } catch (error) {
         console.error("Error checking biometric status:", error);
       }

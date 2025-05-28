@@ -21,7 +21,11 @@
         "trackingCode": "Tracking Code",
         "help_center": "Help Center",
         "back": "Back",
-        "continue": "Continue"
+        "continue": "Continue",
+        "delivered": "Delivered",
+        "inTransit": "In Transit",
+        "pending": "Pending",
+        "cancelled": "Cancelled"
     },
     "welcome": {
         "title": "Welcome to DMS",
@@ -88,7 +92,10 @@
         "trackingNumber": "Tracking Number",
         "status": "Status",
         "destination": "Destination",
-        "origin": "Origin"
+        "origin": "Origin",
+        "createdAt": "Created at",
+        "updatedAt": "Updated at",
+        "actions": "Actions"
     },
     "clients": {
         "title": "Clients",

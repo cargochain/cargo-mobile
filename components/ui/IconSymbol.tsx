@@ -14,7 +14,10 @@ const MAPPING = {
   "paperplane.fill": "send",
   "chevron.left.forwardslash.chevron.right": "code",
   "chevron.right": "chevron-right",
-  truck: "local-shipping", // Using MaterialIcons' local-shipping as fallback
+  truck: "local-shipping",
+  "gearshape.fill": "settings",
+  "shippingbox.fill": "inventory",
+  "person.fill": "person",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"] | "truck",

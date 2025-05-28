@@ -1,50 +1,48 @@
-import { gql } from "@apollo/client";
 import { client } from "./apolloClient";
 import {
   getDeviceData,
-  getDeviceMetadata,
   storeDeviceMetadata,
   DeviceMetadata,
 } from "./secureStorage";
 import * as LocalAuthentication from "expo-local-authentication";
 
 // Query to check if user has biometric enabled
-const CHECK_BIOMETRIC_ENABLED_QUERY = gql`
-  query CheckBiometricEnabled($nif: String!) {
-    userHasBiometricEnabled(nif: $nif)
-  }
-`;
+// const CHECK_BIOMETRIC_ENABLED_QUERY = gql`
+//   query CheckBiometricEnabled($nif: String!) {
+//     userHasBiometricEnabled(nif: $nif)
+//   }
+// `;
 
 // Mutation to enable biometric authentication
-const ENABLE_BIOMETRIC_MUTATION = gql`
-  mutation SignInWithBiometric($input: UserSignInWithBiometricInput!) {
-    signInWithBiometric(input: $input) {
-      accessToken
-      refreshToken
-    }
-  }
-`;
+// const ENABLE_BIOMETRIC_MUTATION = gql`
+//   mutation SignInWithBiometric($input: UserSignInWithBiometricInput!) {
+//     signInWithBiometric(input: $input) {
+//       accessToken
+//       refreshToken
+//     }
+//   }
+// `;
 
-export const checkBiometricSetup = async (nif: string): Promise<boolean> => {
-  try {
-    // First check if we have metadata stored locally
-    const deviceMetadata = await getDeviceMetadata();
-    if (deviceMetadata?.hasBiometricEnabled && deviceMetadata.userNif === nif) {
-      return true;
-    }
+// export const checkBiometricSetup = async (nif: string): Promise<boolean> => {
+//   try {
+//     // First check if we have metadata stored locally
+//     const deviceMetadata = await getDeviceMetadata();
+//     if (deviceMetadata?.hasBiometricEnabled && deviceMetadata.userNif === nif) {
+//       return true;
+//     }
 
-    // If not found locally, check with backend
-    const response = await client.query({
-      query: CHECK_BIOMETRIC_ENABLED_QUERY,
-      variables: { nif },
-    });
+//     // If not found locally, check with backend
+//     const response = await client.query({
+//       query: CHECK_BIOMETRIC_ENABLED_QUERY,
+//       variables: { nif },
+//     });
 
-    return response.data.userHasBiometricEnabled;
-  } catch (error) {
-    console.error("Error checking biometric setup:", error);
-    return false;
-  }
-};
+//     return response.data.userHasBiometricEnabled;
+//   } catch (error) {
+//     console.error("Error checking biometric setup:", error);
+//     return false;
+//   }
+// };
 
 export const setupBiometric = async (nif: string): Promise<boolean> => {
   try {
@@ -71,15 +69,15 @@ export const setupBiometric = async (nif: string): Promise<boolean> => {
     }
 
     // Call backend to enable biometric
-    const response = await client.mutate({
-      mutation: ENABLE_BIOMETRIC_MUTATION,
-      variables: {
-        input: {
-          nif,
-          biometricType: deviceData.biometricType,
-        },
-      },
-    });
+    // const response = await client.mutate({
+    //   mutation: ENABLE_BIOMETRIC_MUTATION,
+    //   variables: {
+    //     input: {
+    //       nif,
+    //       biometricType: deviceData.biometricType,
+    //     },
+    //   },
+    // });
 
     // Store metadata locally
     const metadata: DeviceMetadata = {

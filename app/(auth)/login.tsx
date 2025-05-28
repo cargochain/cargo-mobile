@@ -4,7 +4,6 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -17,19 +16,17 @@ import * as LocalAuthentication from "expo-local-authentication";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useAuth } from "@/services/authContext";
 import { Button, Input, LanguageSimple, LanguageSelector } from "@/shared";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function LoginScreen() {
-  const [nif, setNif] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
 
-  const { biometricLogin } = useAuth();
   const { t, i18n } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
@@ -53,11 +50,6 @@ export default function LoginScreen() {
             LocalAuthentication.AuthenticationType.FINGERPRINT
           );
 
-        console.log("compatible", compatible);
-        console.log("enrolled", enrolled);
-        console.log("supportedTypes", supportedTypes);
-        console.log("hasSupportedBiometric", hasSupportedBiometric);
-
         setIsBiometricAvailable(
           compatible && enrolled && hasSupportedBiometric
         );
@@ -77,16 +69,16 @@ export default function LoginScreen() {
   }, []);
 
   const handleContinue = () => {
-    // Validate NIF (9 digits)
-    if (!nif || nif.length !== 9 || !/^\d{9}$/.test(nif)) {
-      setError(t("auth.errors.invalidNif"));
+    // Validate email
+    if (!email) {
+      setError(t("auth.errors.invalidEmail"));
       return;
     }
 
     // Navigate to login PIN screen
     router.push({
       pathname: "/(auth)/login-pin",
-      params: { nif },
+      params: { email },
     });
   };
 
@@ -94,7 +86,6 @@ export default function LoginScreen() {
     try {
       setIsLoading(true);
       setError("");
-      await biometricLogin();
     } catch (err) {
       console.error("Biometric login error:", err);
       setError(t("auth.errors.biometricFailed"));
@@ -153,11 +144,11 @@ export default function LoginScreen() {
 
           <View style={styles.inputContainer}>
             <Input
-              placeholder={t("auth.nif")}
-              value={nif}
-              onChangeText={setNif}
-              keyboardType="numeric"
-              maxLength={9}
+              placeholder={t("auth.email")}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              maxLength={50}
               disabled={isLoading}
               clearable
               required

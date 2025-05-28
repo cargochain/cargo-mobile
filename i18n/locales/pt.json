@@ -24,7 +24,9 @@
         "continue": "Continuar",
         "assigned": "Atribuído",
         "inTransit": "Em Trânsito",
-        "delivered": "Entregue"
+        "delivered": "Entregue",
+        "pending": "Pendente",
+        "cancelled": "Cancelado"
     },
     "welcome": {
         "title": "Bem-vindo",
@@ -34,7 +36,7 @@
     },
     "auth": {
         "login": "Entrar",
-        "register": "Registar",
+        "register": "Criar conta",
         "nif": "NIF",
         "pin": "PIN",
         "email": "Email",
@@ -50,7 +52,9 @@
             "name": "Nome completo",
             "nif": "Número de NIF",
             "pin": "Código PIN",
-            "confirmPin": "Confirmar PIN"
+            "confirmPin": "Confirmar PIN",
+            "email": "Email",
+            "confirmEmail": "Confirmar Email"
         },
         "errors": {
             "fillAllFields": "Por favor, preencha todos os campos",

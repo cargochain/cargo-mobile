@@ -17,7 +17,11 @@
         "addPhotos": "Agregar Fotos",
         "trackingCode": "Código de Rastreio",
         "help_center": "Centro de Ayuda",
-        "continue": "Continuar"
+        "continue": "Continuar",
+        "delivered": "Entregado",
+        "inTransit": "En Tránsito",
+        "pending": "Pendiente",
+        "cancelled": "Cancelado"
     },
     "auth": {
         "login": "Iniciar sesión",

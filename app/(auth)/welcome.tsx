@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
+import { Button } from "@/shared";
 
 export default function WelcomeScreen() {
   const { t } = useTranslation();
@@ -13,19 +14,18 @@ export default function WelcomeScreen() {
         <Text style={styles.subtitle}>{t("welcome.subtitle")}</Text>
 
         <View style={styles.buttonContainer}>
-          <Link href="/login" asChild>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>{t("welcome.login")}</Text>
-            </TouchableOpacity>
-          </Link>
-
-          <Link href="/register" asChild>
-            <TouchableOpacity style={styles.outlineButton}>
-              <Text style={styles.outlineButtonText}>
-                {t("welcome.register")}
-              </Text>
-            </TouchableOpacity>
-          </Link>
+          <Button
+            title={t("welcome.login")}
+            onPress={() => router.push("/login")}
+            variant="primary"
+            size="large"
+          />
+          <Button
+            title={t("welcome.register")}
+            onPress={() => router.push("/register")}
+            variant="outline"
+            size="large"
+          />
         </View>
       </View>
     </View>
@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     maxWidth: 300,
+    gap: 20,
   },
   button: {
     backgroundColor: Colors.light.primary,

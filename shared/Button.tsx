@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   outlineButton: {
     backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: "#007AFF",
+    borderColor: Colors.light.primary,
   },
   textButton: {
     backgroundColor: "transparent",
@@ -171,10 +171,10 @@ const styles = StyleSheet.create({
     color: Colors.light.primary,
   },
   outlineText: {
-    color: "#007AFF",
+    color: Colors.light.primary,
   },
   textText: {
-    color: "#007AFF",
+    color: Colors.light.primary,
   },
   // Text sizes
   smallText: {

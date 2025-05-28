@@ -16,7 +16,6 @@ import debounce from "lodash/debounce";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { useAuth } from "@/services/authContext";
 import { Button, Input, LanguageSimple } from "@/shared";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -25,16 +24,12 @@ import { formatNIF, unformatNumber } from "@/shared/utils/format";
 
 type FormState = {
   name: string;
-  nif: string;
-  pin: string;
-  confirmPin: string;
-  phoneNumber: string;
+  email: string;
+  confirmEmail: string;
   errors: {
     name?: string;
-    nif?: string;
-    pin?: string;
-    confirmPin?: string;
-    phoneNumber?: string;
+    email?: string;
+    confirmEmail?: string;
   };
 };
 
@@ -75,10 +70,8 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
     case "RESET":
       return {
         name: "",
-        nif: "",
-        pin: "",
-        confirmPin: "",
-        phoneNumber: "",
+        email: "",
+        confirmEmail: "",
         errors: {},
       };
     default:
@@ -88,10 +81,8 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
 
 const initialFormState: FormState = {
   name: "",
-  nif: "",
-  pin: "",
-  confirmPin: "",
-  phoneNumber: "",
+  email: "",
+  confirmEmail: "",
   errors: {},
 };
 
@@ -100,7 +91,6 @@ const RegisterScreen = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [languageModalVisible, setLanguageModalVisible] = React.useState(false);
 
-  const { register } = useAuth();
   const { t, i18n } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
@@ -108,41 +98,36 @@ const RegisterScreen = () => {
   const validateField = useCallback(
     (field: keyof Omit<FormState, "errors">, value: string) => {
       switch (field) {
-        case "nif":
-          // Get unformatted value for validation
-          const unformattedNif = unformatNumber(value);
-          if (
-            unformattedNif.length > 0 &&
-            (unformattedNif.length !== 9 || !/^\d+$/.test(unformattedNif))
-          ) {
-            return t("auth.errors.invalidNif");
-          }
-          break;
         case "name":
           if (!value) {
             return t("auth.errors.fillAllFields");
           }
           break;
-        case "phoneNumber":
+        case "email":
           if (!value) {
             return t("auth.errors.fillAllFields");
+          }
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            return t("auth.errors.invalidEmail");
+          }
+          break;
+        case "confirmEmail":
+          if (!value) {
+            return t("auth.errors.fillAllFields");
+          }
+          if (value !== formData.email) {
+            return t("auth.errors.emailsDoNotMatch");
           }
           break;
       }
       return undefined;
     },
-    [formData.pin, formData.confirmPin, t]
+    [formData.email, t]
   );
 
   const handleInputChange = useCallback(
     (field: keyof Omit<FormState, "errors">, value: string) => {
-      // Format input based on field type
-      let formattedValue = value;
-      if (field === "nif") {
-        formattedValue = formatNIF(value);
-      }
-
-      dispatch({ type: "SET_FIELD", field, value: formattedValue });
+      dispatch({ type: "SET_FIELD", field, value });
 
       // Only validate if the field has a value
       if (value) {
@@ -162,8 +147,21 @@ const RegisterScreen = () => {
   );
 
   const validateForm = useCallback(() => {
-    const fields: Array<keyof Omit<FormState, "errors">> = ["name", "nif"];
+    const fields: Array<keyof Omit<FormState, "errors">> = [
+      "name",
+      "email",
+      "confirmEmail",
+    ];
     let isValid = true;
+
+    if (formData.email !== formData.confirmEmail) {
+      dispatch({
+        type: "SET_ERROR",
+        field: "confirmEmail",
+        error: t("auth.errors.emailsDoNotMatch"),
+      });
+      isValid = false;
+    }
 
     fields.forEach((field) => {
       const error = validateField(field, formData[field]);
@@ -183,10 +181,10 @@ const RegisterScreen = () => {
 
     // Navigate to PIN screen with unformatted NIF
     router.push({
-      pathname: "/(auth)/pin",
+      pathname: "/(auth)/register-pin",
       params: {
         name: formData.name,
-        nif: unformatNumber(formData.nif),
+        email: formData.email,
       },
     });
   }, [formData, validateForm]);
@@ -235,12 +233,8 @@ const RegisterScreen = () => {
         error={formData.errors[field]}
         label={t(`auth.labels.${field}`)}
         // Optimize numeric input props
-        keyboardType={
-          field === "nif" || field === "phoneNumber" ? "numeric" : "default"
-        }
-        maxLength={
-          field === "nif" ? 9 : field === "phoneNumber" ? 9 : undefined
-        }
+        keyboardType={field === "email" ? "email-address" : "default"}
+        maxLength={field === "email" ? 50 : undefined}
         {...props}
       />
     ),
@@ -284,16 +278,17 @@ const RegisterScreen = () => {
               clearable: true,
             })}
 
-            {renderInput("nif", {
-              placeholder: t("auth.nif"),
-              keyboardType: "numeric",
-              maxLength: 11, // 9 digits + 2 spaces
+            {renderInput("email", {
+              placeholder: t("auth.email"),
+              keyboardType: "email-address",
+              autoCapitalize: "none",
               clearable: true,
             })}
 
-            {renderInput("phoneNumber", {
-              placeholder: t("auth.phoneNumber"),
-              keyboardType: "numeric",
+            {renderInput("confirmEmail", {
+              placeholder: t("auth.confirmEmail"),
+              keyboardType: "email-address",
+              autoCapitalize: "none",
               clearable: true,
             })}
           </View>

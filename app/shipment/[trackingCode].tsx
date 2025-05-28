@@ -32,12 +32,11 @@ const GET_SHIPMENT_QUERY = gql`
       company {
         id
         name
-        nif
       }
       user {
         id
         name
-        nif
+        email
       }
       files {
         id
@@ -588,7 +587,6 @@ const styles = StyleSheet.create({
   imageSelectorModalWrapper: {
     flex: 1,
     backgroundColor: Colors.light.white,
-    padding: 16,
     gap: 16,
   },
   imageSelectorModalOptions: {
@@ -617,9 +615,10 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   selectedImageContainer: {
-    width: "33.33%", // 3 columns with some spacing
-    aspectRatio: 1, // Square images
+    width: "33.33%",
+    aspectRatio: 1,
     overflow: "hidden",
+    padding: 1,
   },
   selectedImagePressed: {
     borderWidth: 4,
@@ -628,7 +627,6 @@ const styles = StyleSheet.create({
   selectedImage: {
     width: "100%",
     height: "100%",
-    padding: 1,
   },
   selectedOverlay: {
     position: "absolute",

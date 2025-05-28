@@ -25,7 +25,7 @@ export default function LoginPinScreen() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const { nif } = useLocalSearchParams<{ nif: string }>();
+  const { email } = useLocalSearchParams<{ email: string }>();
   const { t } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
@@ -50,7 +50,7 @@ export default function LoginPinScreen() {
     try {
       setIsLoading(true);
       setError("");
-      await login(nif, pin);
+      await login(email.toLowerCase(), pin);
       // Login successful, user will be automatically redirected by the auth context
     } catch (err) {
       console.error("Login error:", err);
@@ -59,7 +59,7 @@ export default function LoginPinScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, [pin, nif, t, validatePin, login]);
+  }, [pin, email, t, validatePin, login]);
 
   const dismissKeyboard = useCallback(() => {
     Keyboard.dismiss();
@@ -85,7 +85,7 @@ export default function LoginPinScreen() {
             type="title"
             style={[styles.title, { color: colors.text }]}
           >
-            {nif}
+            {email}
           </ThemedText>
 
           <ThemedText style={[styles.subtitle, { color: colors.text }]}>
