@@ -23,6 +23,10 @@ export type AssignDriverInput = {
   shipmentId: Scalars['ID']['input'];
 };
 
+export type CompaniesSearchInput = {
+  name: Scalars['String']['input'];
+};
+
 export type Company = {
   __typename?: 'Company';
   createdAt: Scalars['String']['output'];
@@ -47,6 +51,15 @@ export type CurrentUser = {
   name: Scalars['String']['output'];
 };
 
+export type CustomerSignUpInput = {
+  companyName: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  phoneCountryCode: Scalars['String']['input'];
+  phoneNumber: Scalars['String']['input'];
+};
+
 export type Driver = {
   __typename?: 'Driver';
   email: Scalars['String']['output'];
@@ -69,6 +82,7 @@ export type Mutation = {
   completeDelivery: Shipment;
   createCompany: Company;
   createShipment: Shipment;
+  customerSignUp: UserSignUpResponse;
   refreshToken: RefreshTokenResponse;
   signIn: UserSignInResponse;
   signUp: UserSignUpResponse;
@@ -95,6 +109,11 @@ export type MutationCreateCompanyArgs = {
 
 export type MutationCreateShipmentArgs = {
   input: CreateShipmentInput;
+};
+
+
+export type MutationCustomerSignUpArgs = {
+  input: CustomerSignUpInput;
 };
 
 
@@ -136,6 +155,11 @@ export type Query = {
   shipment: Shipment;
   shipmentNotifications: Array<ShipmentNotification>;
   shipments: Array<Shipment>;
+};
+
+
+export type QueryCompaniesArgs = {
+  input: CompaniesSearchInput;
 };
 
 

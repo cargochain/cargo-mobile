@@ -12,7 +12,6 @@ import {
 import { Link, router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
-import * as LocalAuthentication from "expo-local-authentication";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -25,41 +24,41 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
-  const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
+  // const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
 
   const { t, i18n } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
 
   // Check if biometric authentication is available
-  useEffect(() => {
-    const checkBiometrics = async () => {
-      try {
-        const compatible = await LocalAuthentication.hasHardwareAsync();
-        const enrolled = await LocalAuthentication.isEnrolledAsync();
+  // useEffect(() => {
+  //   const checkBiometrics = async () => {
+  //     try {
+  //       const compatible = await LocalAuthentication.hasHardwareAsync();
+  //       const enrolled = await LocalAuthentication.isEnrolledAsync();
 
-        const supportedTypes =
-          await LocalAuthentication.supportedAuthenticationTypesAsync();
+  //       const supportedTypes =
+  //         await LocalAuthentication.supportedAuthenticationTypesAsync();
 
-        // Check if device has any supported biometric type
-        const hasSupportedBiometric =
-          supportedTypes.includes(
-            LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
-          ) ||
-          supportedTypes.includes(
-            LocalAuthentication.AuthenticationType.FINGERPRINT
-          );
+  //       // Check if device has any supported biometric type
+  //       const hasSupportedBiometric =
+  //         supportedTypes.includes(
+  //           LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
+  //         ) ||
+  //         supportedTypes.includes(
+  //           LocalAuthentication.AuthenticationType.FINGERPRINT
+  //         );
 
-        setIsBiometricAvailable(
-          compatible && enrolled && hasSupportedBiometric
-        );
-      } catch (error) {
-        console.error("Error checking biometric availability:", error);
-        setIsBiometricAvailable(false);
-      }
-    };
-    checkBiometrics();
-  }, []);
+  //       setIsBiometricAvailable(
+  //         compatible && enrolled && hasSupportedBiometric
+  //       );
+  //     } catch (error) {
+  //       console.error("Error checking biometric availability:", error);
+  //       setIsBiometricAvailable(false);
+  //     }
+  //   };
+  //   checkBiometrics();
+  // }, []);
 
   // Set Portuguese as the default language on first load
   useEffect(() => {
@@ -109,8 +108,6 @@ export default function LoginScreen() {
   const changeLanguage = (languageCode: string) => {
     i18n.changeLanguage(languageCode);
   };
-
-  console.log("isBiometricAvailable", isBiometricAvailable);
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -166,7 +163,7 @@ export default function LoginScreen() {
             style={{ backgroundColor: colors.primary }}
           />
 
-          {isBiometricAvailable && (
+          {/* {isBiometricAvailable && (
             <Button
               title={
                 Platform.OS === "ios"
@@ -188,7 +185,7 @@ export default function LoginScreen() {
                 style={{ marginRight: 8 }}
               />
             </Button>
-          )}
+          )} */}
 
           <View style={styles.footer}>
             <Link href="/(auth)/register" replace asChild>

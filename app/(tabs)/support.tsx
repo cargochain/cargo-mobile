@@ -61,22 +61,9 @@ export default function SupportScreen() {
         </View>
       </View>
       <View style={styles.container}>
-        <ThemedText type="subtitle">{t("support.instructions")}</ThemedText>
-        <ThemedText type="default">{t("support.instructionsDesc")}</ThemedText>
-
-        <TouchableOpacity
-          style={styles.whatsappButton}
-          onPress={handleWhatsAppPress}
-        >
-          <IconSymbol
-            name="message.fill"
-            size={20}
-            color={Colors.light.white}
-          />
-          <Text style={styles.whatsappButtonText}>
-            {t("support.contactWhatsApp")}
-          </Text>
-        </TouchableOpacity>
+        <ThemedText type="title">{t("support.anyProblem")}</ThemedText>
+        <ThemedText type="default">{t("support.description")}</ThemedText>
+        <ThemedText type="subtitle">+351 938 373 944</ThemedText>
       </View>
     </SafeAreaView>
   );

@@ -21,7 +21,9 @@
         "delivered": "Entregado",
         "inTransit": "En Tránsito",
         "pending": "Pendiente",
-        "cancelled": "Cancelado"
+        "cancelled": "Cancelado",
+        "startDelivery": "Iniciar Entrega",
+        "confirmDelivery": "Confirmar Entrega"
     },
     "auth": {
         "login": "Iniciar sesión",
@@ -62,7 +64,8 @@
         "title": "Inicio",
         "welcome": "Bienvenido a DMS",
         "dashboard": "Panel de Control",
-        "recentActivity": "Actividad Reciente"
+        "recentActivity": "Actividad Reciente",
+        "description": "Gestione sus envíos y clientes aquí."
     },
     "shipments": {
         "title": "Envíos",
@@ -106,6 +109,7 @@
         "description": "Contacte con nosotros para obtener ayuda y soporte.",
         "contact": "Contacto",
         "phone": "Teléfono",
-        "email": "Correo Electrónico"
+        "email": "Correo Electrónico",
+        "anyProblem": "¿Tiene algún problema?"
     }
 }

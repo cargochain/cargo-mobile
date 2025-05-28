@@ -151,7 +151,7 @@ export default function ShipmentDetailsScreen() {
       case "ASSIGNED":
         return (
           <Button
-            title={t("Start Delivery")}
+            title={t("common.startDelivery")}
             onPress={() =>
               startDelivery({
                 variables: { trackingCode: shipment.trackingCode },
@@ -159,13 +159,14 @@ export default function ShipmentDetailsScreen() {
             }
             loading={startDeliveryLoading}
             variant="primary"
+            style={{ width: "100%" }}
             size="large"
           />
         );
       case "IN_TRANSIT":
         return (
           <Button
-            title={t("Confirm Delivery")}
+            title={t("common.confirmDelivery")}
             onPress={() =>
               completeDelivery({
                 variables: { trackingCode: shipment.trackingCode },
@@ -418,7 +419,17 @@ export default function ShipmentDetailsScreen() {
             {t("common.trackingCode")}:
           </Text>
           <Text style={styles.headerTitleValue}>{shipment.trackingCode}</Text>
-          <Text style={styles.headerTitleLabel}>
+          <Text
+            style={[
+              styles.headerTitleLabel,
+              {
+                color: Colors.light.primary,
+                fontWeight: "600",
+                marginTop: 10,
+                fontSize: 16,
+              },
+            ]}
+          >
             {getShipmentStatusLabel(shipment.status)}
           </Text>
         </View>
@@ -487,8 +498,8 @@ const styles = StyleSheet.create({
     color: `${Colors.light.text}90`,
   },
   headerTitleValue: {
-    fontSize: 20,
-    color: Colors.light.text,
+    fontSize: 18,
+    color: Colors.light.primary,
     textTransform: "uppercase",
     fontWeight: "bold",
   },

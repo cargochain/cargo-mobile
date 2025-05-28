@@ -26,7 +26,9 @@
         "inTransit": "Em Trânsito",
         "delivered": "Entregue",
         "pending": "Pendente",
-        "cancelled": "Cancelado"
+        "cancelled": "Cancelado",
+        "startDelivery": "Iniciar Entrega",
+        "confirmDelivery": "Confirmar Entrega"
     },
     "welcome": {
         "title": "Bem-vindo",
@@ -75,7 +77,8 @@
         "title": "Início",
         "welcome": "Bem-vindo ao DMS",
         "dashboard": "Painel",
-        "recentActivity": "Atividade Recente"
+        "recentActivity": "Atividade Recente",
+        "description": "Gerencie suas remessas e clientes aqui."
     },
     "shipments": {
         "title": "Remessas",
@@ -125,6 +128,7 @@
         "email": "E-mail",
         "instructions": "Instruções",
         "instructionsDesc": "Siga as instruções para resolver seu problema.",
-        "contactWhatsApp": "Contate-nos via WhatsApp"
+        "contactWhatsApp": "Contate-nos via WhatsApp",
+        "anyProblem": "Algum problema?"
     }
 }

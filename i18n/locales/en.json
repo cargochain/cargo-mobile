@@ -25,7 +25,9 @@
         "delivered": "Delivered",
         "inTransit": "In Transit",
         "pending": "Pending",
-        "cancelled": "Cancelled"
+        "cancelled": "Cancelled",
+        "startDelivery": "Start Delivery",
+        "confirmDelivery": "Confirm Delivery"
     },
     "welcome": {
         "title": "Welcome to DMS",
@@ -80,7 +82,8 @@
         "title": "Home",
         "welcome": "Welcome to DMS",
         "dashboard": "Dashboard",
-        "recentActivity": "Recent Activity"
+        "recentActivity": "Recent Activity",
+        "description": "Manage your shipments and clients here."
     },
     "shipments": {
         "title": "Shipments",
@@ -127,6 +130,7 @@
         "description": "Contact us for help and support.",
         "contact": "Contact",
         "phone": "Phone",
-        "email": "Email"
+        "email": "Email",
+        "anyProblem": "Do you have any problem?"
     }
 }
