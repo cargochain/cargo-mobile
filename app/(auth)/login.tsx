@@ -112,7 +112,7 @@ export default function LoginScreen() {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView
-        style={[styles.container, { backgroundColor: colors.secondary }]}
+        style={[styles.container]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <View style={styles.headerContainer}>

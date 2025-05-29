@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { Text, type TextProps, StyleSheet } from "react-native";
 
 export type ThemedTextProps = TextProps & {
@@ -22,6 +23,7 @@ export function ThemedText({
         type === "subtitle" ? styles.subtitle : undefined,
         type === "link" ? styles.link : undefined,
         style,
+        { color: Colors.light.primary },
       ]}
       {...rest}
     />

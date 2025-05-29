@@ -28,7 +28,10 @@
         "pending": "Pendente",
         "cancelled": "Cancelado",
         "startDelivery": "Iniciar Entrega",
-        "confirmDelivery": "Confirmar Entrega"
+        "confirmDelivery": "Confirmar Entrega",
+        "loading": "Carregando...",
+        "errorLoadingShipments": "Erro ao carregar remessas",
+        "noShipments": "Nenhuma remessa encontrada"
     },
     "welcome": {
         "title": "Bem-vindo",
@@ -78,7 +81,8 @@
         "welcome": "Bem-vindo ao DMS",
         "dashboard": "Painel",
         "recentActivity": "Atividade Recente",
-        "description": "Gerencie suas remessas e clientes aqui."
+        "description": "Gerencie suas remessas e clientes aqui.",
+        "notifications": "Notificações"
     },
     "shipments": {
         "title": "Remessas",

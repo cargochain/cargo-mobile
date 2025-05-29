@@ -134,12 +134,12 @@ export default function ShipmentsScreen() {
         </View>
         {loading ? (
           <View style={styles.centerContent}>
-            <ThemedText>{t("Loading...")}</ThemedText>
+            <ThemedText>{t("common.loading")}</ThemedText>
           </View>
         ) : error ? (
           <View style={styles.centerContent}>
             <ThemedText style={styles.error}>
-              {t("Error loading shipments")}
+              {t("common.errorLoadingShipments")}
             </ThemedText>
           </View>
         ) : (
@@ -150,7 +150,7 @@ export default function ShipmentsScreen() {
             contentContainerStyle={styles.listContainer}
             ListEmptyComponent={
               <View style={styles.centerContent}>
-                <ThemedText>{t("No shipments found")}</ThemedText>
+                <ThemedText>{t("common.noShipments")}</ThemedText>
               </View>
             }
             style={styles.list}

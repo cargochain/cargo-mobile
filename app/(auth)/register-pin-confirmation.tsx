@@ -119,7 +119,7 @@ export default function PinConfirmationScreen() {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView
-        style={[styles.container, { backgroundColor: colors.background }]}
+        style={[styles.container]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
         enabled
@@ -188,6 +188,7 @@ export default function PinConfirmationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.light.secondary,
   },
   headerContainer: {
     position: "absolute",
@@ -206,6 +207,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: "center",
+    backgroundColor: Colors.light.secondary,
   },
   title: {
     fontSize: 24,

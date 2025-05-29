@@ -244,7 +244,7 @@ const RegisterScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <KeyboardAvoidingView
-        style={[styles.container, { backgroundColor: colors.secondary }]}
+        style={[styles.container, { backgroundColor: Colors.light.secondary }]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >

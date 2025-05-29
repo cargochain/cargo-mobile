@@ -27,7 +27,10 @@
         "pending": "Pending",
         "cancelled": "Cancelled",
         "startDelivery": "Start Delivery",
-        "confirmDelivery": "Confirm Delivery"
+        "confirmDelivery": "Confirm Delivery",
+        "loading": "Loading...",
+        "errorLoadingShipments": "Error loading shipments",
+        "noShipments": "No shipments found"
     },
     "welcome": {
         "title": "Welcome to DMS",
@@ -83,7 +86,8 @@
         "welcome": "Welcome to DMS",
         "dashboard": "Dashboard",
         "recentActivity": "Recent Activity",
-        "description": "Manage your shipments and clients here."
+        "description": "Manage your shipments and clients here.",
+        "notifications": "Notifications"
     },
     "shipments": {
         "title": "Shipments",
