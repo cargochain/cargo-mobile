@@ -32,7 +32,6 @@ export default function PinConfirmationScreen() {
     email: string;
     previousPin: string;
   }>();
-  console.log("pin-confirmation", name, email, previousPin);
   const { t } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
@@ -73,7 +72,6 @@ export default function PinConfirmationScreen() {
       return;
     }
 
-    console.log("Registering user...", { email, pin, name });
     try {
       setIsLoading(true);
       setError("");

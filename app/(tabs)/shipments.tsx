@@ -14,7 +14,10 @@ import { useRouter } from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
-import { SearchShipmentsQuery } from "@/services/generated/graphql";
+import {
+  SearchShipmentsQuery,
+  SearchShipmentsQueryVariables,
+} from "@/services/generated/graphql";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useAuth } from "@/services/authContext";
 import { useEffect } from "react";
@@ -43,17 +46,17 @@ export default function ShipmentsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { user } = useAuth();
-  const { data, loading, error, refetch } = useQuery<SearchShipmentsQuery>(
-    GET_SHIPMENTS,
-    {
-      pollInterval: 1000,
-      variables: {
-        input: {
-          driverId: user?.id,
-        },
+  const { data, loading, error } = useQuery<
+    SearchShipmentsQuery,
+    SearchShipmentsQueryVariables
+  >(GET_SHIPMENTS, {
+    pollInterval: 1000,
+    variables: {
+      input: {
+        driverId: user?.id,
       },
-    }
-  );
+    },
+  });
 
   useEffect(() => {
     getDeviceMetadata().then((metadata) => {
@@ -61,15 +64,15 @@ export default function ShipmentsScreen() {
     });
   }, []);
 
-  const getStatusLabel = (status: string) => {
+  const getStatusLabel = (status: number) => {
     switch (status) {
-      case "ASSIGNED":
+      case 1:
         return `${t("common.pending")} 🕐`;
-      case "IN_TRANSIT":
+      case 2:
         return `${t("common.inTransit")} 🚚`;
-      case "DELIVERED":
+      case 3:
         return `${t("common.delivered")} 🎉`;
-      case "CANCELLED":
+      case 4:
         return `❌ ${t("common.cancelled")}`;
       default:
         return status;
