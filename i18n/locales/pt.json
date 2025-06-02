@@ -31,7 +31,8 @@
         "confirmDelivery": "Confirmar Entrega",
         "loading": "Carregando...",
         "errorLoadingShipments": "Erro ao carregar remessas",
-        "noShipments": "Nenhuma remessa encontrada"
+        "noShipments": "Nenhuma remessa encontrada",
+        "notStarted": "Não iniciado"
     },
     "welcome": {
         "title": "Bem-vindo",
@@ -53,6 +54,11 @@
         "loggingIn": "A entrar...",
         "registering": "A registar...",
         "enterPin": "Digite o seu PIN para continuar",
+        "createAccount": "Criar conta",
+        "button": {
+            "continue": "Continuar",
+            "login": "Entrar"
+        },
         "labels": {
             "name": "Nome completo",
             "nif": "Número de NIF",
@@ -112,7 +118,7 @@
     },
     "settings": {
         "title": "Configurações",
-        "description": "Gerencie suas configurações de conta e preferências.",
+        "description": "Gerencie suas configurações de conta.",
         "language": "Idioma",
         "theme": "Tema",
         "notifications": "Notificações",

@@ -1,7 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 import { Platform } from "react-native";
-import { gql } from "@apollo/client";
 import * as Device from "expo-device";
 
 // Keys for storing authentication data

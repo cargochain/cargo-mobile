@@ -37,6 +37,7 @@ export const PinInput: React.FC<PinInputProps> = ({
   ...rest
 }) => {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  // eslint-disable-next-line
   const inputRefs = useRef<Array<TextInput | null>>([]);
 
   useEffect(() => {

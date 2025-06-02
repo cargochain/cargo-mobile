@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect to home if authenticated and in auth group
       router.replace("/(tabs)" as any);
     }
-  }, [isAuthenticated, segments, isLoading]);
+  }, [isAuthenticated, segments, isLoading, router]);
 
   // Login function
   const login = async (email: string, pin: string) => {

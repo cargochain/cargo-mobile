@@ -1,5 +1,4 @@
 import { SafeAreaView, StyleSheet, View, Text, Platform } from "react-native";
-import { useRouter } from "expo-router";
 
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";

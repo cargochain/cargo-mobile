@@ -2,7 +2,6 @@ import React from "react";
 import {
   Modal,
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   FlatList,
@@ -50,7 +49,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         styles.languageItem,
         { borderBottomColor: colors.accent },
         currentLanguage === item.code && {
-          backgroundColor: `${colors.primary}20`,
+          backgroundColor: Colors.light.white,
         },
       ]}
       onPress={() => {
@@ -75,9 +74,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       onRequestClose={onClose}
     >
       <SafeAreaView style={styles.modalContainer}>
-        <ThemedView
-          style={[styles.modalContent, { backgroundColor: colors.background }]}
-        >
+        <ThemedView style={[styles.modalContent]}>
           <View style={styles.header}>
             <ThemedText
               type="title"
@@ -117,6 +114,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 20,
     maxHeight: "80%",
+    backgroundColor: Colors.light.white,
   },
   header: {
     flexDirection: "row",

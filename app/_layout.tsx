@@ -6,160 +6,17 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 import { ApolloProvider } from "@apollo/client";
-import { Alert, Platform, Linking } from "react-native";
-import * as LocalAuthentication from "expo-local-authentication";
 
 import "@/i18n"; // Import i18n configuration
 import { client } from "@/services/apolloClient";
-import { AuthProvider, useAuth } from "@/services/authContext";
+import { AuthProvider } from "@/services/authContext";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
-// import { checkBiometricSetup, setupBiometric } from "@/services/biometricSetup";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 function RootLayoutNav() {
-  const { user } = useAuth();
-
-  useEffect(() => {
-    const checkBiometric = async () => {
-      if (!user?.id) return;
-
-      try {
-        // Check if device supports biometric authentication
-        const compatible = await LocalAuthentication.hasHardwareAsync();
-        const enrolled = await LocalAuthentication.isEnrolledAsync();
-
-        console.log("compatible", compatible);
-        console.log("enrolled", enrolled);
-
-        if (!compatible || !enrolled) {
-          console.log(
-            "Device does not support biometric authentication or user is not enrolled"
-          );
-          if (Platform.OS === "ios") {
-            try {
-              const result = await LocalAuthentication.authenticateAsync({
-                promptMessage: "Enable Face ID for faster login",
-                fallbackLabel: "Use passcode",
-                disableDeviceFallback: false,
-              });
-
-              if (!result.success) {
-                Alert.alert(
-                  "Face ID Required",
-                  "Face ID is required for biometric login. Please enable it in your device settings.",
-                  [
-                    {
-                      text: "Open Settings",
-                      onPress: () => {
-                        Linking.openSettings();
-                      },
-                    },
-                    {
-                      text: "Cancel",
-                      style: "cancel",
-                    },
-                  ]
-                );
-              }
-            } catch (error) {
-              console.error("Error requesting Face ID:", error);
-            }
-          } else {
-            try {
-              const result = await LocalAuthentication.authenticateAsync({
-                promptMessage: "Enable fingerprint for faster login",
-                fallbackLabel: "Use passcode",
-                disableDeviceFallback: false,
-              });
-
-              if (!result.success) {
-                Alert.alert(
-                  "Fingerprint Required",
-                  "Fingerprint authentication is required for biometric login. Please enable it in your device settings.",
-                  [
-                    {
-                      text: "Open Settings",
-                      onPress: () => {
-                        Linking.openSettings();
-                      },
-                    },
-                    {
-                      text: "Cancel",
-                      style: "cancel",
-                    },
-                  ]
-                );
-              }
-            } catch (error) {
-              console.error("Error requesting fingerprint:", error);
-            }
-          }
-          return;
-        }
-
-        // For iOS, check Face ID permissions
-        if (Platform.OS === "ios") {
-          try {
-            const result = await LocalAuthentication.authenticateAsync({
-              promptMessage: "Authenticate to continue",
-              fallbackLabel: "Use passcode",
-              disableDeviceFallback: false,
-            });
-
-            if (!result.success) {
-              console.log("Face ID permission denied or authentication failed");
-              return;
-            }
-          } catch (error) {
-            console.error("Error checking Face ID permissions:", error);
-            return;
-          }
-        }
-
-        // const hasBiometricEnabled = await checkBiometricSetup(user.nif);
-        // if (!hasBiometricEnabled) {
-        //   Alert.alert(
-        //     "Enable Biometric Login",
-        //     "Would you like to enable biometric login for faster access?",
-        //     [
-        //       {
-        //         text: "Not Now",
-        //         style: "cancel",
-        //       },
-        //       {
-        //         text: "Enable",
-        //         onPress: async () => {
-        //           try {
-        //             const success = await setupBiometric(user.nif);
-        //             if (!success) {
-        //               Alert.alert(
-        //                 "Error",
-        //                 "Failed to setup biometric authentication"
-        //               );
-        //             }
-        //           } catch (error) {
-        //             console.error("Error setting up biometric:", error);
-        //             Alert.alert(
-        //               "Error",
-        //               "Failed to setup biometric authentication"
-        //             );
-        //           }
-        //         },
-        //       },
-        //     ]
-        //   );
-        // }
-      } catch (error) {
-        console.error("Error checking biometric status:", error);
-      }
-    };
-
-    checkBiometric();
-  }, [user?.nif]);
-
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ navigationBarColor: "#ffffff" }}>

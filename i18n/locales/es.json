@@ -26,7 +26,8 @@
         "confirmDelivery": "Confirmar Entrega",
         "loading": "Cargando...",
         "errorLoadingShipments": "Error al cargar envíos",
-        "noShipments": "No se encontraron envíos"
+        "noShipments": "No se encontraron envíos",
+        "notStarted": "No iniciado"
     },
     "auth": {
         "login": "Iniciar sesión",
@@ -42,6 +43,11 @@
         "loggingIn": "Iniciando sesión...",
         "registering": "Registrando...",
         "enterPin": "Ingrese su PIN para continuar",
+        "createAccount": "Crear cuenta",
+        "button": {
+            "continue": "Continuar",
+            "login": "Iniciar sesión"
+        },
         "labels": {
             "name": "Nombre completo",
             "nif": "Número de NIF",

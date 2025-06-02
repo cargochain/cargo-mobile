@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Link, router } from "expo-router";
+import { View, Text, StyleSheet } from "react-native";
+import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
 import { Button } from "@/shared";

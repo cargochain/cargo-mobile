@@ -1,9 +1,4 @@
-import { client } from "./apolloClient";
-import {
-  getDeviceData,
-  storeDeviceMetadata,
-  DeviceMetadata,
-} from "./secureStorage";
+import { storeDeviceMetadata, DeviceMetadata } from "./secureStorage";
 import * as LocalAuthentication from "expo-local-authentication";
 
 // Query to check if user has biometric enabled
@@ -53,9 +48,6 @@ export const setupBiometric = async (nif: string): Promise<boolean> => {
     if (!compatible || !enrolled) {
       throw new Error("Biometric authentication not available on this device");
     }
-
-    // Get device data
-    const deviceData = await getDeviceData();
 
     // Authenticate with device biometrics first
     const result = await LocalAuthentication.authenticateAsync({

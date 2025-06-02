@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -22,7 +22,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
   // const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
 
@@ -60,13 +60,6 @@ export default function LoginScreen() {
   //   checkBiometrics();
   // }, []);
 
-  // Set Portuguese as the default language on first load
-  useEffect(() => {
-    if (i18n.language !== "pt") {
-      i18n.changeLanguage("pt");
-    }
-  }, []);
-
   const handleContinue = () => {
     // Validate email
     if (!email) {
@@ -79,18 +72,6 @@ export default function LoginScreen() {
       pathname: "/(auth)/login-pin",
       params: { email },
     });
-  };
-
-  const handleBiometricLogin = async () => {
-    try {
-      setIsLoading(true);
-      setError("");
-    } catch (err) {
-      console.error("Biometric login error:", err);
-      setError(t("auth.errors.biometricFailed"));
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const dismissKeyboard = () => {

@@ -4,7 +4,6 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Keyboard,
   TouchableWithoutFeedback,
   TouchableOpacity,
@@ -20,7 +19,6 @@ import { Button, Input, LanguageSimple } from "@/shared";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Fonts } from "@/constants/Fonts";
-import { formatNIF, unformatNumber } from "@/shared/utils/format";
 
 type FormState = {
   name: string;
@@ -88,10 +86,10 @@ const initialFormState: FormState = {
 
 const RegisterScreen = () => {
   const [formData, dispatch] = useReducer(formReducer, initialFormState);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [languageModalVisible, setLanguageModalVisible] = React.useState(false);
+  const [isLoading] = React.useState(false);
+  const [, setLanguageModalVisible] = React.useState(false);
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
 
@@ -147,6 +145,7 @@ const RegisterScreen = () => {
   );
 
   const validateForm = useCallback(() => {
+    // eslint-disable-next-line
     const fields: Array<keyof Omit<FormState, "errors">> = [
       "name",
       "email",
@@ -172,7 +171,7 @@ const RegisterScreen = () => {
     });
 
     return isValid;
-  }, [formData, validateField]);
+  }, [formData, validateField, t]);
 
   const handleContinue = useCallback(() => {
     if (!validateForm()) {
@@ -211,17 +210,6 @@ const RegisterScreen = () => {
   const openLanguageSelector = useCallback(() => {
     setLanguageModalVisible(true);
   }, []);
-
-  const closeLanguageSelector = useCallback(() => {
-    setLanguageModalVisible(false);
-  }, []);
-
-  const changeLanguage = useCallback(
-    (languageCode: string) => {
-      i18n.changeLanguage(languageCode);
-    },
-    [i18n]
-  );
 
   const renderInput = useCallback(
     (field: keyof Omit<FormState, "errors">, props: any) => (

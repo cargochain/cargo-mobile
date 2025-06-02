@@ -10,6 +10,7 @@ import { ThemedText } from "./ThemedText";
 import { ThemedView } from "./ThemedView";
 import { useTranslation } from "react-i18next";
 import { getAvailableLanguages, changeLanguage } from "@/i18n";
+import { Colors } from "@/constants/Colors";
 
 interface LanguageSelectorProps {
   visible: boolean;
@@ -85,13 +86,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: Colors.light.white,
   },
   modalContent: {
     width: "80%",
     borderRadius: 10,
     padding: 20,
     alignItems: "center",
+    backgroundColor: Colors.light.white,
   },
   modalTitle: {
     marginBottom: 20,

@@ -1,48 +1,12 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Linking,
-  Platform,
-} from "react-native";
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import { SafeAreaView, StyleSheet, View, Text, Platform } from "react-native";
 
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { ThemedText } from "@/components/ThemedText";
-import { useAuth } from "@/services/authContext";
 
 export default function SupportScreen() {
   const { t } = useTranslation();
-  const { user } = useAuth();
-
-  const handleWhatsAppPress = async () => {
-    if (!user?.phoneNumber) {
-      console.log("No phone number available");
-      return;
-    }
-
-    const phoneNumber = user.phoneNumber;
-    const message = encodeURIComponent(
-      t("support.defaultMessage") || "Hello, I need help with CargoChain"
-    );
-    const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${message}`;
-
-    try {
-      const supported = await Linking.canOpenURL(whatsappUrl);
-      if (supported) {
-        await Linking.openURL(whatsappUrl);
-      } else {
-        console.log("WhatsApp is not installed");
-      }
-    } catch (error) {
-      console.error("Error opening WhatsApp:", error);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.wrapper}>

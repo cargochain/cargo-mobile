@@ -84,7 +84,7 @@ export default function PinConfirmationScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, [pin, previousPin, name, email, t, validatePin, register]);
+  }, [pin, name, email, t, validatePin, register]);
 
   const dismissKeyboard = useCallback(() => {
     Keyboard.dismiss();

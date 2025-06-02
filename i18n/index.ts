@@ -49,7 +49,7 @@ const initI18n = async () => {
   i18n.use(initReactI18next).init({
     resources,
     lng: savedLanguage,
-    fallbackLng: "en",
+    fallbackLng: "pt",
     interpolation: {
       escapeValue: false,
     },

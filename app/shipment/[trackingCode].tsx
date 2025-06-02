@@ -22,6 +22,10 @@ import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/shared/Button";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { FontAwesome6 } from "@expo/vector-icons";
+import {
+  GetShipmentQuery,
+  GetShipmentQueryVariables,
+} from "@/services/generated/graphql";
 
 const GET_SHIPMENT_QUERY = gql`
   query GetShipment($trackingCode: String!) {
@@ -79,8 +83,11 @@ export default function ShipmentDetailsScreen() {
     useState(false);
 
   // Fetch the shipment details
-  const { data, loading, error } = useQuery(GET_SHIPMENT_QUERY, {
-    variables: { trackingCode },
+  const { data, loading, error } = useQuery<
+    GetShipmentQuery,
+    GetShipmentQueryVariables
+  >(GET_SHIPMENT_QUERY, {
+    variables: { trackingCode: trackingCode as string },
   });
 
   // start delivery mutation
@@ -128,18 +135,18 @@ export default function ShipmentDetailsScreen() {
     return <ThemedText>{t("Error loading shipment details")}</ThemedText>;
   }
 
-  const shipment = data.shipment;
+  const shipment = data?.shipment;
   if (!shipment) {
     return <ThemedText>{t("Shipment not found")}</ThemedText>;
   }
 
-  const getShipmentStatusLabel = (status: string) => {
+  const getShipmentStatusLabel = (status: number) => {
     switch (status) {
-      case "ASSIGNED":
-        return t("common.assigned");
-      case "IN_TRANSIT":
+      case 1:
+        return t("common.notStarted");
+      case 2:
         return t("common.inTransit");
-      case "DELIVERED":
+      case 3:
         return t("common.delivered");
       default:
         return "";
@@ -148,7 +155,7 @@ export default function ShipmentDetailsScreen() {
 
   const renderActionButton = () => {
     switch (shipment.status) {
-      case "ASSIGNED":
+      case 1:
         return (
           <Button
             title={t("common.startDelivery")}
@@ -163,7 +170,7 @@ export default function ShipmentDetailsScreen() {
             size="large"
           />
         );
-      case "IN_TRANSIT":
+      case 2:
         return (
           <Button
             title={t("common.confirmDelivery")}
@@ -177,6 +184,8 @@ export default function ShipmentDetailsScreen() {
             size="large"
           />
         );
+      case 3:
+        return <Text style={styles.statusText}>{t("common.delivered")}</Text>;
       default:
         return null;
     }
@@ -423,17 +432,18 @@ export default function ShipmentDetailsScreen() {
             style={[
               styles.headerTitleLabel,
               {
-                color: Colors.light.primary,
+                color: Colors.light.text,
                 fontWeight: "600",
                 marginTop: 10,
                 fontSize: 16,
+                fontStyle: "italic",
               },
             ]}
           >
             {getShipmentStatusLabel(shipment.status)}
           </Text>
         </View>
-        {shipment.status === "IN_TRANSIT" && (
+        {shipment.status === 2 && (
           <TouchableOpacity
             onPress={() => setIsImageSelectorModalVisible(true)}
             style={styles.addPhotosButton}
@@ -443,6 +453,9 @@ export default function ShipmentDetailsScreen() {
               {t("common.addPhotos")}
             </Text>
           </TouchableOpacity>
+        )}
+        {shipment.status === 3 && (
+          <FontAwesome6 name="check" size={18} color={Colors.light.success} />
         )}
       </View>
       <View style={styles.container}>
@@ -502,6 +515,7 @@ const styles = StyleSheet.create({
     color: Colors.light.primary,
     textTransform: "uppercase",
     fontWeight: "bold",
+    letterSpacing: 1,
   },
   container: {
     flex: 1,
@@ -593,7 +607,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 16,
     color: Colors.light.primary,
-    fontFamily: "Suisse",
+    textAlign: "center",
   },
   imageSelectorModalWrapper: {
     flex: 1,

@@ -30,7 +30,8 @@
         "confirmDelivery": "Confirm Delivery",
         "loading": "Loading...",
         "errorLoadingShipments": "Error loading shipments",
-        "noShipments": "No shipments found"
+        "noShipments": "No shipments found",
+        "notStarted": "Not Started"
     },
     "welcome": {
         "title": "Welcome to DMS",

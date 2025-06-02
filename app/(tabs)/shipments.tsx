@@ -6,7 +6,6 @@ import {
   Text,
   TouchableOpacity,
   Platform,
-  ScrollView,
 } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "expo-router";
