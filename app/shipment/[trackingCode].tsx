@@ -23,9 +23,17 @@ import { Button } from "@/shared/Button";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { FontAwesome6 } from "@expo/vector-icons";
 import {
+  FinishDeliveryMutation,
+  FinishDeliveryMutationVariables,
   GetShipmentQuery,
   GetShipmentQueryVariables,
+  CompleteDeliveryMutation,
+  CompleteDeliveryMutationVariables,
   ShipmentStatus,
+  StartDeliveryMutation,
+  StartDeliveryMutationVariables,
+  UnloadShipmentMutation,
+  UnloadShipmentMutationVariables,
 } from "@/services/generated/graphql";
 
 const GET_SHIPMENT_QUERY = gql`
@@ -54,6 +62,22 @@ const GET_SHIPMENT_QUERY = gql`
 const START_DELIVERY_MUTATION = gql`
   mutation StartDelivery($trackingCode: String!) {
     startDelivery(trackingCode: $trackingCode) {
+      trackingCode
+    }
+  }
+`;
+
+const FINISH_DELIVERY_MUTATION = gql`
+  mutation FinishDelivery($trackingCode: String!) {
+    finishDelivery(trackingCode: $trackingCode) {
+      trackingCode
+    }
+  }
+`;
+
+const UNLOAD_SHIPMENT_MUTATION = gql`
+  mutation UnloadShipment($trackingCode: String!) {
+    unloadShipment(trackingCode: $trackingCode) {
       trackingCode
     }
   }
@@ -92,27 +116,47 @@ export default function ShipmentDetailsScreen() {
   });
 
   // start delivery mutation
-  const [startDelivery, { loading: startDeliveryLoading }] = useMutation(
-    START_DELIVERY_MUTATION,
-    {
-      refetchQueries: [
-        {
-          query: GET_SHIPMENT_QUERY,
-          variables: { trackingCode },
-        },
-      ],
-    }
-  );
+  const [startDelivery, { loading: startDeliveryLoading }] = useMutation<
+    StartDeliveryMutation,
+    StartDeliveryMutationVariables
+  >(START_DELIVERY_MUTATION, {
+    refetchQueries: [
+      {
+        query: GET_SHIPMENT_QUERY,
+        variables: { trackingCode },
+      },
+    ],
+  });
+
+  // finish delivery mutation
+  const [finishDelivery, { loading: finishDeliveryLoading }] = useMutation<
+    FinishDeliveryMutation,
+    FinishDeliveryMutationVariables
+  >(FINISH_DELIVERY_MUTATION, {
+    refetchQueries: [
+      { query: GET_SHIPMENT_QUERY, variables: { trackingCode } },
+    ],
+  });
+
+  // unload delivery mutation
+  const [unloadShipment, { loading: unloadShipmentLoading }] = useMutation<
+    UnloadShipmentMutation,
+    UnloadShipmentMutationVariables
+  >(UNLOAD_SHIPMENT_MUTATION, {
+    refetchQueries: [
+      { query: GET_SHIPMENT_QUERY, variables: { trackingCode } },
+    ],
+  });
 
   // complete delivery mutation
-  const [completeDelivery, { loading: completeDeliveryLoading }] = useMutation(
-    COMPLETE_DELIVERY_MUTATION,
-    {
-      refetchQueries: [
-        { query: GET_SHIPMENT_QUERY, variables: { trackingCode } },
-      ],
-    }
-  );
+  const [completeDelivery, { loading: completeDeliveryLoading }] = useMutation<
+    CompleteDeliveryMutation,
+    CompleteDeliveryMutationVariables
+  >(COMPLETE_DELIVERY_MUTATION, {
+    refetchQueries: [
+      { query: GET_SHIPMENT_QUERY, variables: { trackingCode } },
+    ],
+  });
 
   // upload shipment base64 files mutation
   const [
@@ -145,8 +189,14 @@ export default function ShipmentDetailsScreen() {
     switch (status) {
       case ShipmentStatus.READY:
         return t("common.readyToStart");
+      case ShipmentStatus.LOADING:
+        return t("common.loadingShipment");
       case ShipmentStatus.IN_TRANSIT:
         return t("common.inTransit");
+      case ShipmentStatus.ARRIVED:
+        return t("common.arrivedAtDestination");
+      case ShipmentStatus.UNLOADING:
+        return t("common.unloading");
       case ShipmentStatus.DELIVERED:
         return t("common.delivered");
       default:
@@ -174,7 +224,35 @@ export default function ShipmentDetailsScreen() {
       case ShipmentStatus.IN_TRANSIT:
         return (
           <Button
-            title={t("common.confirmDelivery")}
+            title={t("common.finishDelivery")}
+            onPress={() =>
+              finishDelivery({
+                variables: { trackingCode: shipment.trackingCode },
+              })
+            }
+            loading={completeDeliveryLoading}
+            variant="primary"
+            size="large"
+          />
+        );
+      case ShipmentStatus.ARRIVED:
+        return (
+          <Button
+            title={t("common.unloadShipment")}
+            onPress={() =>
+              unloadShipment({
+                variables: { trackingCode: shipment.trackingCode },
+              })
+            }
+            loading={completeDeliveryLoading}
+            variant="primary"
+            size="large"
+          />
+        );
+      case ShipmentStatus.UNLOADING:
+        return (
+          <Button
+            title={t("common.completeDelivery")}
             onPress={() =>
               completeDelivery({
                 variables: { trackingCode: shipment.trackingCode },
@@ -445,7 +523,7 @@ export default function ShipmentDetailsScreen() {
           </Text>
         </View>
         {(shipment.status === ShipmentStatus.LOADING ||
-          shipment.status === ShipmentStatus.IN_TRANSIT) && (
+          shipment.status === ShipmentStatus.UNLOADING) && (
           <TouchableOpacity
             onPress={() => setIsImageSelectorModalVisible(true)}
             style={styles.addPhotosButton}

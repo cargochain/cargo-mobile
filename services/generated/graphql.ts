@@ -84,11 +84,13 @@ export type Mutation = {
   createCompany: Company;
   createShipment: Shipment;
   customerSignUp: UserSignUpResponse;
+  finishDelivery: Shipment;
   getShipmentReadyForDelivery: Shipment;
   refreshToken: RefreshTokenResponse;
   signIn: UserSignInResponse;
   signUp: UserSignUpResponse;
   startDelivery: Shipment;
+  unloadShipment: Shipment;
   uploadShipmentBase64Files: Shipment;
   uploadShipmentFiles: Shipment;
 };
@@ -119,6 +121,11 @@ export type MutationCustomerSignUpArgs = {
 };
 
 
+export type MutationFinishDeliveryArgs = {
+  trackingCode: Scalars['String']['input'];
+};
+
+
 export type MutationGetShipmentReadyForDeliveryArgs = {
   trackingCode: Scalars['String']['input'];
 };
@@ -140,6 +147,11 @@ export type MutationSignUpArgs = {
 
 
 export type MutationStartDeliveryArgs = {
+  trackingCode: Scalars['String']['input'];
+};
+
+
+export type MutationUnloadShipmentArgs = {
   trackingCode: Scalars['String']['input'];
 };
 
@@ -224,12 +236,14 @@ export type ShipmentSearchInput = {
 };
 
 export enum ShipmentStatus {
+  ARRIVED = 'arrived',
   DELIVERED = 'delivered',
   FAILED = 'failed',
   IN_TRANSIT = 'in_transit',
   LOADING = 'loading',
   NOT_STARTED = 'not_started',
-  READY = 'ready'
+  READY = 'ready',
+  UNLOADING = 'unloading'
 }
 
 export type UploadShipmentBase64FilesInput = {
@@ -300,6 +314,20 @@ export type StartDeliveryMutationVariables = Exact<{
 
 
 export type StartDeliveryMutation = { __typename?: 'Mutation', startDelivery: { __typename?: 'Shipment', trackingCode: string } };
+
+export type FinishDeliveryMutationVariables = Exact<{
+  trackingCode: Scalars['String']['input'];
+}>;
+
+
+export type FinishDeliveryMutation = { __typename?: 'Mutation', finishDelivery: { __typename?: 'Shipment', trackingCode: string } };
+
+export type UnloadShipmentMutationVariables = Exact<{
+  trackingCode: Scalars['String']['input'];
+}>;
+
+
+export type UnloadShipmentMutation = { __typename?: 'Mutation', unloadShipment: { __typename?: 'Shipment', trackingCode: string } };
 
 export type CompleteDeliveryMutationVariables = Exact<{
   trackingCode: Scalars['String']['input'];
@@ -437,6 +465,60 @@ export function useStartDeliveryMutation(baseOptions?: Apollo.MutationHookOption
 export type StartDeliveryMutationHookResult = ReturnType<typeof useStartDeliveryMutation>;
 export type StartDeliveryMutationResult = Apollo.MutationResult<StartDeliveryMutation>;
 export type StartDeliveryMutationOptions = Apollo.BaseMutationOptions<StartDeliveryMutation, StartDeliveryMutationVariables>;
+export const FinishDeliveryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FinishDelivery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"finishDelivery"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"trackingCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}}]}}]}}]} as unknown as DocumentNode;
+export type FinishDeliveryMutationFn = Apollo.MutationFunction<FinishDeliveryMutation, FinishDeliveryMutationVariables>;
+
+/**
+ * __useFinishDeliveryMutation__
+ *
+ * To run a mutation, you first call `useFinishDeliveryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFinishDeliveryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [finishDeliveryMutation, { data, loading, error }] = useFinishDeliveryMutation({
+ *   variables: {
+ *      trackingCode: // value for 'trackingCode'
+ *   },
+ * });
+ */
+export function useFinishDeliveryMutation(baseOptions?: Apollo.MutationHookOptions<FinishDeliveryMutation, FinishDeliveryMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<FinishDeliveryMutation, FinishDeliveryMutationVariables>(FinishDeliveryDocument, options);
+      }
+export type FinishDeliveryMutationHookResult = ReturnType<typeof useFinishDeliveryMutation>;
+export type FinishDeliveryMutationResult = Apollo.MutationResult<FinishDeliveryMutation>;
+export type FinishDeliveryMutationOptions = Apollo.BaseMutationOptions<FinishDeliveryMutation, FinishDeliveryMutationVariables>;
+export const UnloadShipmentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UnloadShipment"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"unloadShipment"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"trackingCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}}]}}]}}]} as unknown as DocumentNode;
+export type UnloadShipmentMutationFn = Apollo.MutationFunction<UnloadShipmentMutation, UnloadShipmentMutationVariables>;
+
+/**
+ * __useUnloadShipmentMutation__
+ *
+ * To run a mutation, you first call `useUnloadShipmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnloadShipmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unloadShipmentMutation, { data, loading, error }] = useUnloadShipmentMutation({
+ *   variables: {
+ *      trackingCode: // value for 'trackingCode'
+ *   },
+ * });
+ */
+export function useUnloadShipmentMutation(baseOptions?: Apollo.MutationHookOptions<UnloadShipmentMutation, UnloadShipmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UnloadShipmentMutation, UnloadShipmentMutationVariables>(UnloadShipmentDocument, options);
+      }
+export type UnloadShipmentMutationHookResult = ReturnType<typeof useUnloadShipmentMutation>;
+export type UnloadShipmentMutationResult = Apollo.MutationResult<UnloadShipmentMutation>;
+export type UnloadShipmentMutationOptions = Apollo.BaseMutationOptions<UnloadShipmentMutation, UnloadShipmentMutationVariables>;
 export const CompleteDeliveryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CompleteDelivery"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"completeDelivery"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"trackingCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"trackingCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"trackingCode"}}]}}]}}]} as unknown as DocumentNode;
 export type CompleteDeliveryMutationFn = Apollo.MutationFunction<CompleteDeliveryMutation, CompleteDeliveryMutationVariables>;
 

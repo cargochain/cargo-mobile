@@ -32,7 +32,13 @@
         "errorLoadingShipments": "Error loading shipments",
         "noShipments": "No shipments found",
         "readyToStart": "Ready to start",
-        "loadingShipment": "Loading shipment..."
+        "loadingShipment": "Loading shipment...",
+        "finishRoute": "Finish Route",
+        "arrivedAtDestination": "Arrived at destination",
+        "unloading": "Unloading",
+        "finishDelivery": "Finish Delivery",
+        "unloadShipment": "Unload Shipment",
+        "completeDelivery": "Complete Delivery"
     },
     "welcome": {
         "title": "Welcome to DMS",

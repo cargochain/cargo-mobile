@@ -33,7 +33,13 @@
         "errorLoadingShipments": "Erro ao carregar remessas",
         "noShipments": "Nenhuma remessa encontrada",
         "readyToStart": "Pronto para iniciar",
-        "loadingShipment": "Carregando remessa..."
+        "loadingShipment": "Carregando remessa...",
+        "finishRoute": "Finalizar Rota",
+        "arrivedAtDestination": "Chegou ao destino",
+        "unloading": "Descarregando",
+        "finishDelivery": "Finalizar Entrega",
+        "unloadShipment": "Descarregar Remessa",
+        "completeDelivery": "Completar Entrega"
     },
     "welcome": {
         "title": "Bem-vindo",

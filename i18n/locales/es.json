@@ -28,7 +28,13 @@
         "errorLoadingShipments": "Error al cargar envíos",
         "noShipments": "No se encontraron envíos",
         "readyToStart": "Pronto para iniciar",
-        "loadingShipment": "Cargando envío..."
+        "loadingShipment": "Cargando envío...",
+        "finishRoute": "Finalizar Rota",
+        "arrivedAtDestination": "Llegó al destino",
+        "unloading": "Descargando",
+        "finishDelivery": "Finalizar Entrega",
+        "unloadShipment": "Descargar Remessa",
+        "completeDelivery": "Completar Entrega"
     },
     "auth": {
         "login": "Iniciar sesión",
