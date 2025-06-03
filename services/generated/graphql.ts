@@ -84,6 +84,7 @@ export type Mutation = {
   createCompany: Company;
   createShipment: Shipment;
   customerSignUp: UserSignUpResponse;
+  getShipmentReadyForDelivery: Shipment;
   refreshToken: RefreshTokenResponse;
   signIn: UserSignInResponse;
   signUp: UserSignUpResponse;
@@ -115,6 +116,11 @@ export type MutationCreateShipmentArgs = {
 
 export type MutationCustomerSignUpArgs = {
   input: CustomerSignUpInput;
+};
+
+
+export type MutationGetShipmentReadyForDeliveryArgs = {
+  trackingCode: Scalars['String']['input'];
 };
 
 
@@ -205,7 +211,7 @@ export type Shipment = {
   driver?: Maybe<Driver>;
   files: Array<File>;
   id: Scalars['ID']['output'];
-  status: Scalars['Int']['output'];
+  status: ShipmentStatus;
   trackingCode: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
   user: User;
@@ -216,6 +222,15 @@ export type ShipmentSearchInput = {
   driverId?: InputMaybe<Scalars['ID']['input']>;
   userId?: InputMaybe<Scalars['ID']['input']>;
 };
+
+export enum ShipmentStatus {
+  DELIVERED = 'delivered',
+  FAILED = 'failed',
+  IN_TRANSIT = 'in_transit',
+  LOADING = 'loading',
+  NOT_STARTED = 'not_started',
+  READY = 'ready'
+}
 
 export type UploadShipmentBase64FilesInput = {
   files: Array<UserBase64FileInput>;
@@ -270,14 +285,14 @@ export type SearchShipmentsQueryVariables = Exact<{
 }>;
 
 
-export type SearchShipmentsQuery = { __typename?: 'Query', shipments: Array<{ __typename?: 'Shipment', id: string, trackingCode: string, status: number, createdAt: string, updatedAt: string, company: { __typename?: 'Company', name: string }, user: { __typename?: 'User', name: string } }> };
+export type SearchShipmentsQuery = { __typename?: 'Query', shipments: Array<{ __typename?: 'Shipment', id: string, trackingCode: string, status: ShipmentStatus, createdAt: string, updatedAt: string, company: { __typename?: 'Company', name: string }, user: { __typename?: 'User', name: string } }> };
 
 export type GetShipmentQueryVariables = Exact<{
   trackingCode: Scalars['String']['input'];
 }>;
 
 
-export type GetShipmentQuery = { __typename?: 'Query', shipment: { __typename?: 'Shipment', id: string, trackingCode: string, status: number, company: { __typename?: 'Company', id: string, name: string }, user: { __typename?: 'User', id: string, name: string, email: string }, files: Array<{ __typename?: 'File', id: string, url: string }> } };
+export type GetShipmentQuery = { __typename?: 'Query', shipment: { __typename?: 'Shipment', id: string, trackingCode: string, status: ShipmentStatus, company: { __typename?: 'Company', id: string, name: string }, user: { __typename?: 'User', id: string, name: string, email: string }, files: Array<{ __typename?: 'File', id: string, url: string }> } };
 
 export type StartDeliveryMutationVariables = Exact<{
   trackingCode: Scalars['String']['input'];

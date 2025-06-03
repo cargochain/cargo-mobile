@@ -16,6 +16,7 @@ import { Colors } from "@/constants/Colors";
 import {
   SearchShipmentsQuery,
   SearchShipmentsQueryVariables,
+  ShipmentStatus,
 } from "@/services/generated/graphql";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useAuth } from "@/services/authContext";
@@ -63,15 +64,19 @@ export default function ShipmentsScreen() {
     });
   }, []);
 
-  const getStatusLabel = (status: number) => {
+  const getStatusLabel = (status: ShipmentStatus) => {
     switch (status) {
-      case 1:
+      case ShipmentStatus.NOT_STARTED:
+        return `${t("common.notStarted")} 🕐`;
+      case ShipmentStatus.LOADING:
+        return `${t("common.loadingShipment")} 🕐`;
+      case ShipmentStatus.READY:
         return `${t("common.pending")} 🕐`;
-      case 2:
+      case ShipmentStatus.IN_TRANSIT:
         return `${t("common.inTransit")} 🚚`;
-      case 3:
+      case ShipmentStatus.DELIVERED:
         return `${t("common.delivered")} 🎉`;
-      case 4:
+      case ShipmentStatus.FAILED:
         return `❌ ${t("common.cancelled")}`;
       default:
         return status;

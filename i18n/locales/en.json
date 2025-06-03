@@ -31,7 +31,8 @@
         "loading": "Loading...",
         "errorLoadingShipments": "Error loading shipments",
         "noShipments": "No shipments found",
-        "notStarted": "Not Started"
+        "readyToStart": "Ready to start",
+        "loadingShipment": "Loading shipment..."
     },
     "welcome": {
         "title": "Welcome to DMS",

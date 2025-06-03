@@ -32,7 +32,8 @@
         "loading": "Carregando...",
         "errorLoadingShipments": "Erro ao carregar remessas",
         "noShipments": "Nenhuma remessa encontrada",
-        "notStarted": "Não iniciado"
+        "readyToStart": "Pronto para iniciar",
+        "loadingShipment": "Carregando remessa..."
     },
     "welcome": {
         "title": "Bem-vindo",

@@ -25,6 +25,7 @@ import { FontAwesome6 } from "@expo/vector-icons";
 import {
   GetShipmentQuery,
   GetShipmentQueryVariables,
+  ShipmentStatus,
 } from "@/services/generated/graphql";
 
 const GET_SHIPMENT_QUERY = gql`
@@ -140,13 +141,13 @@ export default function ShipmentDetailsScreen() {
     return <ThemedText>{t("Shipment not found")}</ThemedText>;
   }
 
-  const getShipmentStatusLabel = (status: number) => {
+  const getShipmentStatusLabel = (status: ShipmentStatus) => {
     switch (status) {
-      case 1:
-        return t("common.notStarted");
-      case 2:
+      case ShipmentStatus.READY:
+        return t("common.readyToStart");
+      case ShipmentStatus.IN_TRANSIT:
         return t("common.inTransit");
-      case 3:
+      case ShipmentStatus.DELIVERED:
         return t("common.delivered");
       default:
         return "";
@@ -155,7 +156,7 @@ export default function ShipmentDetailsScreen() {
 
   const renderActionButton = () => {
     switch (shipment.status) {
-      case 1:
+      case ShipmentStatus.READY:
         return (
           <Button
             title={t("common.startDelivery")}
@@ -170,7 +171,7 @@ export default function ShipmentDetailsScreen() {
             size="large"
           />
         );
-      case 2:
+      case ShipmentStatus.IN_TRANSIT:
         return (
           <Button
             title={t("common.confirmDelivery")}
@@ -184,7 +185,7 @@ export default function ShipmentDetailsScreen() {
             size="large"
           />
         );
-      case 3:
+      case ShipmentStatus.DELIVERED:
         return <Text style={styles.statusText}>{t("common.delivered")}</Text>;
       default:
         return null;
@@ -443,7 +444,8 @@ export default function ShipmentDetailsScreen() {
             {getShipmentStatusLabel(shipment.status)}
           </Text>
         </View>
-        {shipment.status === 2 && (
+        {(shipment.status === ShipmentStatus.LOADING ||
+          shipment.status === ShipmentStatus.IN_TRANSIT) && (
           <TouchableOpacity
             onPress={() => setIsImageSelectorModalVisible(true)}
             style={styles.addPhotosButton}
@@ -454,7 +456,7 @@ export default function ShipmentDetailsScreen() {
             </Text>
           </TouchableOpacity>
         )}
-        {shipment.status === 3 && (
+        {shipment.status === ShipmentStatus.DELIVERED && (
           <FontAwesome6 name="check" size={18} color={Colors.light.success} />
         )}
       </View>
