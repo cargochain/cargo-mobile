@@ -51,9 +51,7 @@ export default function LoginPinScreen() {
       setIsLoading(true);
       setError("");
       await login(email.toLowerCase(), pin);
-      // Login successful, user will be automatically redirected by the auth context
-    } catch (err) {
-      console.error("Login error:", err);
+    } catch {
       setError(t("auth.errors.invalidCredentials"));
       setPin("");
     } finally {

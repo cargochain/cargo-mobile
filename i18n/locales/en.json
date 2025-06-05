@@ -78,7 +78,9 @@
             "passwordsDontMatch": "Passwords don't match",
             "invalidCredentials": "Invalid NIF or PIN",
             "registrationFailed": "Registration failed. Please try again.",
-            "pinsDontMatch": "PINs don't match"
+            "pinsDontMatch": "PINs don't match",
+            "invalidEmail": "Invalid email",
+            "emailsDontMatch": "Emails don't match"
         },
         "loginWithBiometrics": "Login with Biometrics",
         "createPin": "Create PIN",
@@ -87,7 +89,8 @@
         "confirmPinDescription": "Enter the same PIN again to confirm",
         "phoneNumber": "Phone Number",
         "loginWithAppleID": "Login with Apple ID",
-        "createAccount": "Create Account"
+        "createAccount": "Create Account",
+        "confirmEmail": "Confirm Email"
     },
     "home": {
         "title": "Home",

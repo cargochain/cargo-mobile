@@ -136,9 +136,9 @@ const errorLink = onError(
             })();
           });
         }
-        console.error(
-          `[GraphQL error]: Message: ${err.message}, Location: ${err.locations}, Path: ${err.path}`
-        );
+        // console.error(
+        //   `[GraphQL error]: Message: ${err.message}, Location: ${err.locations}, Path: ${err.path}`
+        // );
       }
     }
     if (networkError) {

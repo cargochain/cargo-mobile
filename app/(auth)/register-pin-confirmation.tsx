@@ -43,32 +43,21 @@ export default function PinConfirmationScreen() {
   }, []);
 
   const validatePin = useCallback(() => {
-    console.log("Validating pin:", { pin, previousPin, pinLength: pin.length });
-
     if (pin.length !== 4) {
-      console.log("Pin length validation failed");
       setError(t("auth.errors.invalidPin"));
       return false;
     }
 
     if (pin !== previousPin) {
-      console.log("Pin match validation failed");
       setError(t("auth.errors.pinsDontMatch"));
       return false;
     }
 
-    console.log("Pin validation successful");
     return true;
   }, [pin, previousPin, t]);
 
   const handleSignUp = useCallback(async () => {
-    console.log("Starting sign up process...", {
-      email,
-      name,
-      pinLength: pin.length,
-    });
     if (!validatePin()) {
-      console.log("Pin validation failed, aborting sign up");
       return;
     }
 
@@ -120,7 +109,6 @@ export default function PinConfirmationScreen() {
         style={[styles.container]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-        enabled
       >
         <View style={styles.headerContainer}>
           <TouchableWithoutFeedback onPress={() => router.back()}>
@@ -130,12 +118,7 @@ export default function PinConfirmationScreen() {
           </TouchableWithoutFeedback>
         </View>
 
-        <ThemedView
-          style={[
-            styles.content,
-            Platform.OS === "ios" && { paddingBottom: keyboardHeight },
-          ]}
-        >
+        <ThemedView style={[styles.content]}>
           <ThemedText
             type="title"
             style={[styles.title, { color: colors.text }]}

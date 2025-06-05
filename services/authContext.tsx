@@ -113,7 +113,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
       }
     } catch (error) {
-      console.error("Error validating token:", error);
       // Clear auth data on error
       await clearAuthData();
       setUser(null);
@@ -178,7 +177,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Update state
       setUser(usrResp.data.currentUser);
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     } finally {
       setIsLoading(false);

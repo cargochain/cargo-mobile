@@ -68,13 +68,16 @@
             "passwordsDontMatch": "Las contraseñas no coinciden",
             "invalidCredentials": "NIF o PIN inválido",
             "registrationFailed": "Error en el registro. Por favor, inténtelo de nuevo.",
-            "pinsDontMatch": "Los PINs no coinciden"
+            "pinsDontMatch": "Los PINs no coinciden",
+            "invalidEmail": "Email inválido",
+            "emailsDontMatch": "Los emails no coinciden"
         },
         "loginWithBiometrics": "Iniciar sesión con biometría",
         "createPin": "Crear PIN",
         "confirmPin": "Confirmar PIN",
         "createPinDescription": "Ingrese un PIN de 4 dígitos para proteger su cuenta",
-        "confirmPinDescription": "Ingrese el mismo PIN nuevamente para confirmar"
+        "confirmPinDescription": "Ingrese el mismo PIN nuevamente para confirmar",
+        "confirmEmail": "Confirmar Email"
     },
     "home": {
         "title": "Inicio",

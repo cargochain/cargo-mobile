@@ -24,41 +24,10 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
   const [isLoading] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
-  // const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
 
   const { t, i18n } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
-
-  // Check if biometric authentication is available
-  // useEffect(() => {
-  //   const checkBiometrics = async () => {
-  //     try {
-  //       const compatible = await LocalAuthentication.hasHardwareAsync();
-  //       const enrolled = await LocalAuthentication.isEnrolledAsync();
-
-  //       const supportedTypes =
-  //         await LocalAuthentication.supportedAuthenticationTypesAsync();
-
-  //       // Check if device has any supported biometric type
-  //       const hasSupportedBiometric =
-  //         supportedTypes.includes(
-  //           LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION
-  //         ) ||
-  //         supportedTypes.includes(
-  //           LocalAuthentication.AuthenticationType.FINGERPRINT
-  //         );
-
-  //       setIsBiometricAvailable(
-  //         compatible && enrolled && hasSupportedBiometric
-  //       );
-  //     } catch (error) {
-  //       console.error("Error checking biometric availability:", error);
-  //       setIsBiometricAvailable(false);
-  //     }
-  //   };
-  //   checkBiometrics();
-  // }, []);
 
   const handleContinue = () => {
     // Validate email
@@ -143,30 +112,6 @@ export default function LoginScreen() {
             size="large"
             style={{ backgroundColor: colors.primary }}
           />
-
-          {/* {isBiometricAvailable && (
-            <Button
-              title={
-                Platform.OS === "ios"
-                  ? t("auth.loginWithAppleID")
-                  : t("auth.loginWithBiometrics")
-              }
-              onPress={handleBiometricLogin}
-              loading={isLoading}
-              disabled={isLoading}
-              variant="outline"
-              size="large"
-              style={{ marginTop: 10, borderColor: colors.primary }}
-              textStyle={{ color: colors.primary }}
-            >
-              <Ionicons
-                name={Platform.OS === "ios" ? "logo-apple" : "finger-print"}
-                size={24}
-                color={colors.primary}
-                style={{ marginRight: 8 }}
-              />
-            </Button>
-          )} */}
 
           <View style={styles.footer}>
             <Link href="/(auth)/register" replace asChild>

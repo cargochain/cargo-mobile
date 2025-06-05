@@ -114,7 +114,7 @@ const RegisterScreen = () => {
             return t("auth.errors.fillAllFields");
           }
           if (value !== formData.email) {
-            return t("auth.errors.emailsDoNotMatch");
+            return t("auth.errors.emailsDontMatch");
           }
           break;
       }
