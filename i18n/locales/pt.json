@@ -138,7 +138,10 @@
         "logoutConfirmTitle": "Sair",
         "logoutConfirmMessage": "Tem certeza que deseja sair?",
         "logoutError": "Falha ao sair. Por favor, tente novamente.",
-        "selectLanguage": "Selecionar Idioma"
+        "selectLanguage": "Selecionar Idioma",
+        "deleteAccount": "Excluir Conta",
+        "deleteAccountConfirmation": "Tem certeza que deseja excluir sua conta?",
+        "deleteAccountError": "Falha ao excluir conta. Por favor, tente novamente."
     },
     "support": {
         "title": "Ajuda",

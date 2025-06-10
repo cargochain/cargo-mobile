@@ -27,7 +27,7 @@ export default function HomeScreen() {
           </View>
         </View>
         <View style={styles.content}>
-          <ThemedText type="subtitle">{t("home.notifications")}</ThemedText>
+          <ThemedText type="subtitle">{t("home.welcome")}</ThemedText>
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

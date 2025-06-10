@@ -122,7 +122,10 @@
         "logout": "Cerrar Sesión",
         "logoutConfirmTitle": "Cerrar Sesión",
         "logoutConfirmMessage": "¿Está seguro de que desea cerrar sesión?",
-        "logoutError": "Error al cerrar sesión. Por favor, inténtelo de nuevo."
+        "logoutError": "Error al cerrar sesión. Por favor, inténtelo de nuevo.",
+        "deleteAccount": "Eliminar Cuenta",
+        "deleteAccountConfirmation": "¿Está seguro de que desea eliminar su cuenta?",
+        "deleteAccountError": "Error al eliminar cuenta. Por favor, inténtelo de nuevo."
     },
     "support": {
         "title": "Soporte",

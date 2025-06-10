@@ -138,7 +138,10 @@
         "logout": "Logout",
         "logoutConfirmTitle": "Logout",
         "logoutConfirmMessage": "Are you sure you want to logout?",
-        "logoutError": "Failed to logout. Please try again."
+        "logoutError": "Failed to logout. Please try again.",
+        "deleteAccount": "Delete Account",
+        "deleteAccountConfirmation": "Are you sure you want to delete your account?",
+        "deleteAccountError": "Failed to delete account. Please try again."
     },
     "support": {
         "title": "Support",

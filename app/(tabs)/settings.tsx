@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  Alert,
 } from "react-native";
 
 import { useTranslation } from "react-i18next";
@@ -13,11 +14,19 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import { changeLanguage, getAvailableLanguages } from "@/i18n";
 import { useAuth } from "@/services/authContext";
 import { FontAwesome } from "@expo/vector-icons";
+import { gql, useMutation } from "@apollo/client";
+
+const DELETE_DRIVER_ACCOUNT = gql`
+  mutation DeleteDriverAccount($driverId: ID!) {
+    deleteDriverAccount(driverId: $driverId)
+  }
+`;
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const availableLanguages = getAvailableLanguages();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const [deleteAccount] = useMutation(DELETE_DRIVER_ACCOUNT);
 
   const getLanguageFlag = (lang: string) => {
     const flags: { [key: string]: string } = {
@@ -34,6 +43,35 @@ export default function SettingsScreen() {
 
   const handleLogout = async () => {
     await logout();
+  };
+
+  const handleDeleteAccount = async () => {
+    Alert.alert(
+      t("settings.deleteAccount"),
+      t("settings.deleteAccountConfirmation"),
+      [
+        {
+          text: t("common.cancel"),
+          style: "cancel",
+        },
+        {
+          text: t("common.delete"),
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteAccount({
+                variables: {
+                  driverId: user?.id,
+                },
+              });
+              await logout();
+            } catch (error) {
+              Alert.alert(t("common.error"), t("settings.deleteAccountError"));
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -86,6 +124,17 @@ export default function SettingsScreen() {
               color={Colors.light.primary}
             />
             <Text style={styles.sectionTitle}>{t("settings.logout")}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.section}>
+          <TouchableOpacity
+            onPress={handleDeleteAccount}
+            style={styles.deleteButton}
+          >
+            <FontAwesome name="trash" size={24} color={Colors.light.error} />
+            <Text style={[styles.sectionTitle, styles.deleteText]}>
+              {t("settings.deleteAccount")}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -179,5 +228,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  deleteButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  deleteText: {
+    color: Colors.light.error,
   },
 });
