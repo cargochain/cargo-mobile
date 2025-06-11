@@ -23,10 +23,10 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/cargo-logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.cargo.mobile",
+      "package": "com.cargoespresso.mobile",
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
@@ -65,18 +65,9 @@
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to upload images of the shipment."
         }
-      ]
-    ],
-    "fonts": [
-      {
-        "asset": "./assets/fonts/SuisseIntl-Regular.ttf"
-      },
-      {
-        "asset": "./assets/fonts/SuisseIntl-Medium.ttf"
-      },
-      {
-        "asset": "./assets/fonts/SuisseIntl-Bold.ttf"
-      }
+      ],
+      "expo-localization",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
