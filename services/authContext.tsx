@@ -16,7 +16,7 @@ import {
   getDeviceData,
   storeDeviceMetadata,
 } from "./secureStorage";
-import { client } from "./apolloClient";
+import { client, setNavigationCallback } from "./apolloClient";
 import { gql } from "@apollo/client";
 
 // Define the shape of the auth context
@@ -81,6 +81,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Check if the user is authenticated
   const isAuthenticated = !!user;
 
+  // Set up navigation callback for Apollo client
+  useEffect(() => {
+    const navigateToLogin = () => {
+      console.log("Token refresh failed, navigating to login");
+      setUser(null);
+      router.replace("/(auth)/welcome" as any);
+    };
+
+    setNavigationCallback(navigateToLogin);
+
+    // Cleanup on unmount
+    return () => {
+      setNavigationCallback(null);
+    };
+  }, [router]);
+
   // Validate token and get user data
   const validateToken = async () => {
     try {
@@ -112,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await clearAuthData();
         setUser(null);
       }
-    } catch (error) {
+    } catch {
       // Clear auth data on error
       await clearAuthData();
       setUser(null);

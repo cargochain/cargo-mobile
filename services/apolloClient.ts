@@ -19,6 +19,14 @@ const uploadLink = createUploadLink({
   credentials: "include",
 });
 
+// Navigation callback for handling auth failures
+let navigationCallback: (() => void) | null = null;
+
+// Function to set navigation callback from auth context
+export const setNavigationCallback = (callback: (() => void) | null) => {
+  navigationCallback = callback;
+};
+
 const REFRESH_TOKEN_MUTATION = gql`
   mutation RefreshToken($refreshToken: String!) {
     refreshToken(refreshToken: $refreshToken) {
@@ -38,6 +46,10 @@ const refreshTokenAndRetry = async (operation: any) => {
     const refreshToken = await getRefreshToken();
     if (!refreshToken) {
       await clearAuthData();
+      // Navigate to login page
+      if (navigationCallback) {
+        navigationCallback();
+      }
       return null;
     }
 
@@ -87,13 +99,21 @@ const refreshTokenAndRetry = async (operation: any) => {
       return true;
     } else {
       await clearAuthData();
+      // Navigate to login page
+      if (navigationCallback) {
+        navigationCallback();
+      }
       return null;
     }
   } catch (error) {
-    console.error("Error refreshing token:", error);
+    console.error("Token refresh failed:", error);
     await clearAuthData();
     isRefreshing = false;
     pendingRequests = [];
+    // Navigate to login page
+    if (navigationCallback) {
+      navigationCallback();
+    }
     return null;
   }
 };
@@ -128,6 +148,7 @@ const errorLink = onError(
                     complete: observer.complete.bind(observer),
                   });
                 } else {
+                  // Token refresh failed, navigation is handled in refreshTokenAndRetry
                   observer.error(new Error("Authentication failed"));
                 }
               } catch (error) {
@@ -143,6 +164,20 @@ const errorLink = onError(
     }
     if (networkError) {
       console.error(`[Network error]: ${networkError}`);
+
+      // Handle network errors that might indicate auth issues
+      if (
+        "statusCode" in networkError &&
+        (networkError.statusCode === 401 || networkError.statusCode === 403)
+      ) {
+        console.log(
+          "Network auth error, clearing data and navigating to login"
+        );
+        clearAuthData();
+        if (navigationCallback) {
+          navigationCallback();
+        }
+      }
     }
   }
 );

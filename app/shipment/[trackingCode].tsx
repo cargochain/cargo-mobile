@@ -129,7 +129,7 @@ export default function ShipmentDetailsScreen() {
   });
 
   // finish delivery mutation
-  const [finishDelivery, { loading: finishDeliveryLoading }] = useMutation<
+  const [finishDelivery] = useMutation<
     FinishDeliveryMutation,
     FinishDeliveryMutationVariables
   >(FINISH_DELIVERY_MUTATION, {
@@ -139,7 +139,7 @@ export default function ShipmentDetailsScreen() {
   });
 
   // unload delivery mutation
-  const [unloadShipment, { loading: unloadShipmentLoading }] = useMutation<
+  const [unloadShipment] = useMutation<
     UnloadShipmentMutation,
     UnloadShipmentMutationVariables
   >(UNLOAD_SHIPMENT_MUTATION, {
