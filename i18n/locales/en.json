@@ -50,7 +50,6 @@
         "login": "Login",
         "register": "Register",
         "nif": "NIF",
-        "pin": "PIN",
         "email": "Email",
         "password": "Password",
         "confirmPassword": "Confirm Password",
@@ -59,7 +58,6 @@
         "haveAccount": "Already have an account?",
         "loggingIn": "Logging in...",
         "registering": "Registering...",
-        "enterPin": "Enter your PIN to continue",
         "button": {
             "continue": "Continue",
             "login": "Login"
@@ -67,26 +65,25 @@
         "labels": {
             "name": "Full Name",
             "nif": "NIF Number",
-            "pin": "PIN Code",
-            "confirmPin": "Confirm PIN",
+            "email": "Email",
+            "confirmEmail": "Confirm Email",
+            "password": "Password",
+            "confirmPassword": "Confirm Password",
             "phoneNumber": "Phone Number"
         },
         "errors": {
             "fillAllFields": "Please fill in all fields",
             "invalidNif": "NIF must be 9 digits",
-            "invalidPin": "PIN must be 4 digits",
             "passwordsDontMatch": "Passwords don't match",
-            "invalidCredentials": "Invalid NIF or PIN",
+            "invalidCredentials": "Invalid email or password",
             "registrationFailed": "Registration failed. Please try again.",
-            "pinsDontMatch": "PINs don't match",
             "invalidEmail": "Invalid email",
-            "emailsDontMatch": "Emails don't match"
+            "emailsDontMatch": "Emails don't match",
+            "invalidPassword": "Password is required",
+            "passwordTooShort": "Password must be at least 6 characters",
+            "nameTooShort": "Name must be at least 2 characters"
         },
         "loginWithBiometrics": "Login with Biometrics",
-        "createPin": "Create PIN",
-        "confirmPin": "Confirm PIN",
-        "createPinDescription": "Enter a 4-digit PIN to secure your account",
-        "confirmPinDescription": "Enter the same PIN again to confirm",
         "phoneNumber": "Phone Number",
         "loginWithAppleID": "Login with Apple ID",
         "createAccount": "Create Account",

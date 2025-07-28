@@ -14,19 +14,26 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import { changeLanguage, getAvailableLanguages } from "@/i18n";
 import { useAuth } from "@/services/authContext";
 import { FontAwesome } from "@expo/vector-icons";
-import { gql, useMutation } from "@apollo/client";
+import { getAccessToken } from "@/services/secureStorage";
 
-const DELETE_DRIVER_ACCOUNT = gql`
-  mutation DeleteDriverAccount($driverId: ID!) {
-    deleteDriverAccount(driverId: $driverId)
+const fetcher = async (url: string, options: RequestInit) => {
+  const token = await getAccessToken();
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    ...options,
+  });
+  if (response.status === 401) {
+    console.log("401");
   }
-`;
+  return response.json();
+};
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const availableLanguages = getAvailableLanguages();
-  const { logout, user } = useAuth();
-  const [deleteAccount] = useMutation(DELETE_DRIVER_ACCOUNT);
+  const { logout } = useAuth();
 
   const getLanguageFlag = (lang: string) => {
     const flags: { [key: string]: string } = {
@@ -45,6 +52,19 @@ export default function SettingsScreen() {
     await logout();
   };
 
+  const deleteAccount = async () => {
+    const response = await fetcher(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/v1/users/delete-account/`,
+      {
+        method: "DELETE",
+      }
+    );
+    console.log(response);
+    if (response.status === 200) {
+      await logout();
+    }
+  };
+
   const handleDeleteAccount = async () => {
     Alert.alert(
       t("settings.deleteAccount"),
@@ -59,13 +79,9 @@ export default function SettingsScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteAccount({
-                variables: {
-                  driverId: user?.id,
-                },
-              });
+              await deleteAccount();
               await logout();
-            } catch (error) {
+            } catch {
               Alert.alert(t("common.error"), t("settings.deleteAccountError"));
             }
           },

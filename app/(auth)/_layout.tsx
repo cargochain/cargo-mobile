@@ -30,6 +30,12 @@ export default function AuthLayout() {
           animationTypeForReplace: "pop",
         }}
       />
+      <Stack.Screen
+        name="sucessfull-registration"
+        options={{
+          animationTypeForReplace: "pop",
+        }}
+      />
     </Stack>
   );
 }

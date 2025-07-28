@@ -18,29 +18,43 @@ import { ThemedView } from "@/components/ThemedView";
 import { Button, Input, LanguageSimple, LanguageSelector } from "@/shared";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useAuth } from "@/services/authContext";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [languageModalVisible, setLanguageModalVisible] = useState(false);
 
   const { t, i18n } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
+  const { login } = useAuth();
 
-  const handleContinue = () => {
-    // Validate email
+  const handleLogin = async () => {
+    // Validate inputs
     if (!email) {
       setError(t("auth.errors.invalidEmail"));
       return;
     }
 
-    // Navigate to login PIN screen
-    router.push({
-      pathname: "/(auth)/login-pin",
-      params: { email },
-    });
+    if (!password) {
+      setError(t("auth.errors.invalidPassword"));
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError("");
+      await login(email.toLowerCase(), password);
+    } catch (error) {
+      console.log("error", error);
+      setError(t("auth.errors.invalidCredentials"));
+      setPassword("");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const dismissKeyboard = () => {
@@ -101,11 +115,20 @@ export default function LoginScreen() {
               required
               containerStyle={{ borderColor: colors.primary }}
             />
+            <Input
+              placeholder={t("auth.password")}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              disabled={isLoading}
+              required
+              containerStyle={{ borderColor: colors.primary }}
+            />
           </View>
 
           <Button
-            title={t("common.continue")}
-            onPress={handleContinue}
+            title={isLoading ? t("auth.loggingIn") : t("auth.button.login")}
+            onPress={handleLogin}
             loading={isLoading}
             disabled={isLoading}
             variant="primary"

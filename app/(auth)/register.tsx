@@ -12,6 +12,7 @@ import { Link, router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import debounce from "lodash/debounce";
+import { useState } from "react";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -19,17 +20,22 @@ import { Button, Input, LanguageSimple } from "@/shared";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { Fonts } from "@/constants/Fonts";
+import { useAuth } from "@/services/authContext";
 
-type FormState = {
+interface FormState {
   name: string;
   email: string;
   confirmEmail: string;
+  password: string;
+  confirmPassword: string;
   errors: {
     name?: string;
     email?: string;
     confirmEmail?: string;
+    password?: string;
+    confirmPassword?: string;
   };
-};
+}
 
 type FormAction =
   | {
@@ -41,6 +47,10 @@ type FormAction =
       type: "SET_ERROR";
       field: keyof Omit<FormState, "errors">;
       error?: string;
+    }
+  | {
+      type: "CLEAR_ERROR";
+      field: keyof Omit<FormState, "errors">;
     }
   | {
       type: "RESET";
@@ -65,11 +75,21 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
           [action.field]: action.error,
         },
       };
+    case "CLEAR_ERROR":
+      return {
+        ...state,
+        errors: {
+          ...state.errors,
+          [action.field]: undefined,
+        },
+      };
     case "RESET":
       return {
         name: "",
         email: "",
         confirmEmail: "",
+        password: "",
+        confirmPassword: "",
         errors: {},
       };
     default:
@@ -77,90 +97,68 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
   }
 };
 
-const initialFormState: FormState = {
-  name: "",
-  email: "",
-  confirmEmail: "",
-  errors: {},
-};
-
 const RegisterScreen = () => {
-  const [formData, dispatch] = useReducer(formReducer, initialFormState);
-  const [isLoading] = React.useState(false);
-  const [, setLanguageModalVisible] = React.useState(false);
+  const [formData, dispatch] = useReducer(formReducer, {
+    name: "",
+    email: "",
+    confirmEmail: "",
+    password: "",
+    confirmPassword: "",
+    errors: {},
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   const { t } = useTranslation();
   const colorScheme = useColorScheme() ?? "light";
   const colors = Colors[colorScheme];
+  const { register } = useAuth();
 
   const validateField = useCallback(
-    (field: keyof Omit<FormState, "errors">, value: string) => {
+    (field: keyof Omit<FormState, "errors">, value: string): string | null => {
       switch (field) {
         case "name":
-          if (!value) {
-            return t("auth.errors.fillAllFields");
-          }
-          break;
+          return value.trim().length < 2 ? t("auth.errors.nameTooShort") : null;
         case "email":
-          if (!value) {
-            return t("auth.errors.fillAllFields");
-          }
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            return t("auth.errors.invalidEmail");
-          }
-          break;
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return !emailRegex.test(value) ? t("auth.errors.invalidEmail") : null;
         case "confirmEmail":
-          if (!value) {
-            return t("auth.errors.fillAllFields");
-          }
-          if (value !== formData.email) {
-            return t("auth.errors.emailsDontMatch");
-          }
-          break;
+          return value !== formData.email
+            ? t("auth.errors.emailsDontMatch")
+            : null;
+        case "password":
+          return value.length < 6 ? t("auth.errors.passwordTooShort") : null;
+        case "confirmPassword":
+          return value !== formData.password
+            ? t("auth.errors.passwordsDontMatch")
+            : null;
+        default:
+          return null;
       }
-      return undefined;
     },
-    [formData.email, t]
+    [formData.email, formData.password, t]
   );
 
   const handleInputChange = useCallback(
     (field: keyof Omit<FormState, "errors">, value: string) => {
       dispatch({ type: "SET_FIELD", field, value });
 
-      // Only validate if the field has a value
-      if (value) {
-        const error = validateField(field, value);
-        if (error) {
-          dispatch({ type: "SET_ERROR", field, error });
-        } else {
-          // Clear error if validation passes
-          dispatch({ type: "SET_ERROR", field, error: undefined });
-        }
-      } else {
-        // Clear error if field is empty
-        dispatch({ type: "SET_ERROR", field, error: undefined });
+      // Clear error when user starts typing
+      if (formData.errors[field]) {
+        dispatch({ type: "CLEAR_ERROR", field });
       }
     },
-    [validateField]
+    [formData.errors]
   );
 
   const validateForm = useCallback(() => {
-    // eslint-disable-next-line
-    const fields: Array<keyof Omit<FormState, "errors">> = [
+    const fields: (keyof Omit<FormState, "errors">)[] = [
       "name",
       "email",
       "confirmEmail",
+      "password",
+      "confirmPassword",
     ];
     let isValid = true;
-
-    if (formData.email !== formData.confirmEmail) {
-      dispatch({
-        type: "SET_ERROR",
-        field: "confirmEmail",
-        error: t("auth.errors.emailsDoNotMatch"),
-      });
-      isValid = false;
-    }
 
     fields.forEach((field) => {
       const error = validateField(field, formData[field]);
@@ -171,22 +169,24 @@ const RegisterScreen = () => {
     });
 
     return isValid;
-  }, [formData, validateField, t]);
+  }, [formData, validateField]);
 
-  const handleContinue = useCallback(() => {
+  const handleContinue = useCallback(async () => {
     if (!validateForm()) {
       return;
     }
 
-    // Navigate to PIN screen with unformatted NIF
-    router.push({
-      pathname: "/(auth)/register-pin",
-      params: {
-        name: formData.name,
-        email: formData.email,
-      },
-    });
-  }, [formData, validateForm]);
+    try {
+      setIsLoading(true);
+      await register(formData.email, formData.password, formData.name);
+      router.replace("/(auth)/sucessfull-registration");
+    } catch (error) {
+      console.error("Registration error:", error);
+      // Handle registration error
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formData, validateForm, register]);
 
   const debouncedValidate = useMemo(
     () =>
@@ -208,7 +208,7 @@ const RegisterScreen = () => {
   }, []);
 
   const openLanguageSelector = useCallback(() => {
-    setLanguageModalVisible(true);
+    // setLanguageModalVisible(true); // This line was removed as per the edit hint
   }, []);
 
   const renderInput = useCallback(
@@ -220,9 +220,16 @@ const RegisterScreen = () => {
         required
         error={formData.errors[field]}
         label={t(`auth.labels.${field}`)}
-        // Optimize numeric input props
-        keyboardType={field === "email" ? "email-address" : "default"}
-        maxLength={field === "email" ? 50 : undefined}
+        // Optimize input props
+        keyboardType={
+          field === "email" || field === "confirmEmail"
+            ? "email-address"
+            : "default"
+        }
+        maxLength={
+          field === "email" || field === "confirmEmail" ? 50 : undefined
+        }
+        secureTextEntry={field === "password" || field === "confirmPassword"}
         {...props}
       />
     ),
@@ -279,14 +286,26 @@ const RegisterScreen = () => {
               autoCapitalize: "none",
               clearable: true,
             })}
+
+            {renderInput("password", {
+              placeholder: t("auth.password"),
+              secureTextEntry: true,
+            })}
+
+            {renderInput("confirmPassword", {
+              placeholder: t("auth.confirmPassword"),
+              secureTextEntry: true,
+            })}
           </View>
 
           <Button
-            title={t("common.continue")}
+            title={isLoading ? t("auth.registering") : t("common.continue")}
             onPress={handleContinue}
             variant="primary"
             size="large"
             style={[styles.button, { backgroundColor: colors.primary }]}
+            loading={isLoading}
+            disabled={isLoading}
           />
 
           <View style={styles.footer}>

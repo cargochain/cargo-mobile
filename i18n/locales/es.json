@@ -40,7 +40,6 @@
         "login": "Iniciar sesión",
         "register": "Registrarse",
         "nif": "NIF",
-        "pin": "PIN",
         "email": "Correo electrónico",
         "password": "Contraseña",
         "confirmPassword": "Confirmar contraseña",
@@ -49,7 +48,6 @@
         "haveAccount": "¿Ya tienes una cuenta?",
         "loggingIn": "Iniciando sesión...",
         "registering": "Registrando...",
-        "enterPin": "Ingrese su PIN para continuar",
         "createAccount": "Crear cuenta",
         "button": {
             "continue": "Continuar",
@@ -58,26 +56,25 @@
         "labels": {
             "name": "Nombre completo",
             "nif": "Número de NIF",
-            "pin": "Código PIN",
-            "confirmPin": "Confirmar PIN"
+            "email": "Correo electrónico",
+            "confirmEmail": "Confirmar correo electrónico",
+            "password": "Contraseña",
+            "confirmPassword": "Confirmar contraseña"
         },
         "errors": {
             "fillAllFields": "Por favor, complete todos los campos",
             "invalidNif": "El NIF debe tener 9 dígitos",
-            "invalidPin": "El PIN debe tener 4 dígitos",
             "passwordsDontMatch": "Las contraseñas no coinciden",
-            "invalidCredentials": "NIF o PIN inválido",
+            "invalidCredentials": "Correo electrónico o contraseña inválido",
             "registrationFailed": "Error en el registro. Por favor, inténtelo de nuevo.",
-            "pinsDontMatch": "Los PINs no coinciden",
-            "invalidEmail": "Email inválido",
-            "emailsDontMatch": "Los emails no coinciden"
+            "invalidEmail": "Correo electrónico inválido",
+            "emailsDontMatch": "Los correos electrónicos no coinciden",
+            "invalidPassword": "La contraseña es obligatoria",
+            "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+            "nameTooShort": "El nombre debe tener al menos 2 caracteres"
         },
         "loginWithBiometrics": "Iniciar sesión con biometría",
-        "createPin": "Crear PIN",
-        "confirmPin": "Confirmar PIN",
-        "createPinDescription": "Ingrese un PIN de 4 dígitos para proteger su cuenta",
-        "confirmPinDescription": "Ingrese el mismo PIN nuevamente para confirmar",
-        "confirmEmail": "Confirmar Email"
+        "confirmEmail": "Confirmar correo electrónico"
     },
     "home": {
         "title": "Inicio",

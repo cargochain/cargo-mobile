@@ -7,110 +7,70 @@ import {
   TouchableOpacity,
   Platform,
 } from "react-native";
-import { gql, useQuery } from "@apollo/client";
 import { useRouter } from "expo-router";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
-import {
-  SearchShipmentsQuery,
-  SearchShipmentsQueryVariables,
-  ShipmentStatus,
-} from "@/services/generated/graphql";
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import { useAuth } from "@/services/authContext";
-import { useEffect } from "react";
-import { getDeviceMetadata } from "@/services/secureStorage";
+import useSWR from "swr";
+import { getAccessToken } from "@/services/secureStorage";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { components } from "@/lib/rest-api.types";
 
-const GET_SHIPMENTS = gql`
-  query SearchShipments($input: ShipmentSearchInput!) {
-    shipments(input: $input) {
-      id
-      trackingCode
-      status
-      createdAt
-      updatedAt
-      company {
-        name
-      }
-      user {
-        name
-      }
-    }
+const fetcher = async (url: string) => {
+  const token = await getAccessToken();
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (response.status === 401) {
+    console.log("401");
   }
-`;
+  return response.json();
+};
 
 export default function ShipmentsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { user } = useAuth();
-  const { data, loading, error } = useQuery<
-    SearchShipmentsQuery,
-    SearchShipmentsQueryVariables
-  >(GET_SHIPMENTS, {
-    pollInterval: 1000,
-    variables: {
-      input: {
-        driverId: user?.id,
-      },
-    },
+
+  const { data, error, isLoading } = useSWR<
+    components["schemas"]["PaginatedShipmentList"]
+  >(`${process.env.EXPO_PUBLIC_API_URL}/api/v1/shipments/`, fetcher, {
+    refreshInterval: 5000,
   });
-
-  useEffect(() => {
-    getDeviceMetadata().then((metadata) => {
-      console.log("metadata", metadata);
-    });
-  }, []);
-
-  const getStatusLabel = (status: ShipmentStatus) => {
-    switch (status) {
-      case ShipmentStatus.NOT_STARTED:
-        return `${t("common.notStarted")} 🕐`;
-      case ShipmentStatus.LOADING:
-        return `${t("common.loadingShipment")} 🕐`;
-      case ShipmentStatus.READY:
-        return `${t("common.pending")} 🕐`;
-      case ShipmentStatus.IN_TRANSIT:
-        return `${t("common.inTransit")} 🚚`;
-      case ShipmentStatus.DELIVERED:
-        return `${t("common.delivered")} 🎉`;
-      case ShipmentStatus.FAILED:
-        return `❌ ${t("common.cancelled")}`;
-      default:
-        return status;
-    }
-  };
 
   const renderShipment = ({
     item,
   }: {
-    item: SearchShipmentsQuery["shipments"][0];
+    item: components["schemas"]["Shipment"];
   }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => router.push(`/shipment/${item.trackingCode}`)}
+      onPress={() => router.push(`/shipment/${item.uuid}`)}
     >
       <View style={styles.cardHeader}>
         <View style={styles.cardHeaderTitleContainer}>
-          <Text style={styles.cardHeaderTitle}>{item.trackingCode}</Text>
+          <Text style={styles.cardHeaderTitle}>{item.cmr_code}</Text>
         </View>
-        <Text style={styles.cardHeaderStatus}>
-          {getStatusLabel(item.status)}
-        </Text>
       </View>
 
       <View style={styles.cardBody}>
         <View style={styles.cardBodyItem}>
-          <Text style={styles.cardBodyLabel}>{item.user.name}</Text>
+          <Text style={styles.cardBodyLabel}>SHIPPER</Text>
+          <Text style={styles.cardBodyValue}>{item.user.name}</Text>
+        </View>
+        <View style={styles.cardBodyItem}>
+          <Text style={styles.cardBodyLabel}>BUYER</Text>
+          <Text style={styles.cardBodyValue}>{item.company.name}</Text>
         </View>
       </View>
 
       <View style={styles.cardFooter}>
         <Text style={styles.cardFooterLabel}>
           {t("shipments.createdAt")}{" "}
-          {new Date(item.createdAt).toLocaleDateString("pt-BR", {
+          {new Date(item.created_at).toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "2-digit",
             year: "numeric",
@@ -139,7 +99,7 @@ export default function ShipmentsScreen() {
             </Text>
           </View>
         </View>
-        {loading ? (
+        {isLoading ? (
           <View style={styles.centerContent}>
             <ThemedText>{t("common.loading")}</ThemedText>
           </View>
@@ -151,9 +111,9 @@ export default function ShipmentsScreen() {
           </View>
         ) : (
           <FlatList
-            data={data?.shipments}
+            data={data?.results}
             renderItem={renderShipment}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.uuid}
             contentContainerStyle={styles.listContainer}
             ListEmptyComponent={
               <View style={styles.centerContent}>
@@ -244,17 +204,19 @@ const styles = StyleSheet.create({
   cardBody: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 20,
   },
   cardBodyItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+    flexDirection: "column",
   },
   cardBodyLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.light.text,
-    fontFamily: "SuisseMedium",
+    textTransform: "uppercase",
+  },
+  cardBodyValue: {
+    fontSize: 12,
+    color: Colors.light.primary,
   },
   card: {
     backgroundColor: Colors.light.background,

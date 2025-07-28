@@ -51,7 +51,6 @@
         "login": "Entrar",
         "register": "Criar conta",
         "nif": "NIF",
-        "pin": "PIN",
         "email": "Email",
         "password": "Palavra-passe",
         "confirmPassword": "Confirmar palavra-passe",
@@ -60,7 +59,6 @@
         "haveAccount": "Já tem uma conta?",
         "loggingIn": "A entrar...",
         "registering": "A registar...",
-        "enterPin": "Digite o seu PIN para continuar",
         "createAccount": "Criar conta",
         "button": {
             "continue": "Continuar",
@@ -69,27 +67,24 @@
         "labels": {
             "name": "Nome completo",
             "nif": "Número de NIF",
-            "pin": "Código PIN",
-            "confirmPin": "Confirmar PIN",
             "email": "Email",
-            "confirmEmail": "Confirmar Email"
+            "confirmEmail": "Confirmar Email",
+            "password": "Palavra-passe",
+            "confirmPassword": "Confirmar palavra-passe"
         },
         "errors": {
             "fillAllFields": "Por favor, preencha todos os campos",
             "invalidNif": "O NIF deve ter 9 dígitos",
-            "invalidPin": "O PIN deve ter 4 dígitos",
             "passwordsDontMatch": "As palavras-passe não coincidem",
-            "invalidCredentials": "NIF ou PIN inválido",
+            "invalidCredentials": "Email ou palavra-passe inválido",
             "registrationFailed": "Erro no registo. Por favor, tente novamente.",
-            "pinsDontMatch": "Os PINs não coincidem",
             "invalidEmail": "Email inválido",
-            "emailsDontMatch": "Os emails não coincidem"
+            "emailsDontMatch": "Os emails não coincidem",
+            "invalidPassword": "Palavra-passe é obrigatória",
+            "passwordTooShort": "A palavra-passe deve ter pelo menos 6 caracteres",
+            "nameTooShort": "O nome deve ter pelo menos 2 caracteres"
         },
         "loginWithBiometrics": "Entrar com biometria",
-        "createPin": "Criar PIN",
-        "confirmPin": "Confirmar PIN",
-        "createPinDescription": "Digite um PIN de 4 dígitos para proteger sua conta",
-        "confirmPinDescription": "Digite o mesmo PIN novamente para confirmar",
         "confirmEmail": "Confirmar Email"
     },
     "home": {

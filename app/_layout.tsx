@@ -5,10 +5,8 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { ApolloProvider } from "@apollo/client";
 
 import "@/i18n"; // Import i18n configuration
-import { client } from "@/services/apolloClient";
 import { AuthProvider } from "@/services/authContext";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
@@ -70,10 +68,8 @@ export default function RootLayout() {
   }
 
   return (
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <RootLayoutNav />
-      </AuthProvider>
-    </ApolloProvider>
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   );
 }

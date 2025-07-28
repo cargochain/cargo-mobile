@@ -16,8 +16,11 @@ import {
   getDeviceData,
   storeDeviceMetadata,
 } from "./secureStorage";
-import { client, setNavigationCallback } from "./apolloClient";
-import { gql } from "@apollo/client";
+import { setNavigationCallback, apiGet } from "./apiClient";
+
+const API_URL = `${process.env.EXPO_PUBLIC_API_URL}`;
+const TOKEN_URL = `${API_URL}/api/v1/token/`;
+const USER_URL = `${API_URL}/api/v1/users/me/`;
 
 // Define the shape of the auth context
 interface AuthContextType {
@@ -32,44 +35,60 @@ interface AuthContextType {
 // Create the auth context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock GraphQL mutations - replace with your actual mutations
-const SIGN_IN_MUTATION = gql`
-  mutation SignIn($input: UserSignInInput!) {
-    signIn(input: $input) {
-      accessToken
-      refreshToken
-    }
-  }
-`;
+// REST API functions
+const loginUser = async (
+  email: string,
+  password: string
+): Promise<{ access: string; refresh: string }> => {
+  const response = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username: email.toLowerCase().trim(),
+      password,
+    }),
+  });
 
-const SIGN_UP_MUTATION = gql`
-  mutation SignUp($input: UserSignUpInput!) {
-    signUp(input: $input) {
-      success
-      message
-    }
+  if (!response.ok) {
+    throw new Error(`Login failed: ${response.status}`);
   }
-`;
 
-const GET_USER_QUERY = gql`
-  query GetUser {
-    currentUser {
-      id
-      email
-      name
-    }
+  return response.json();
+};
+
+const registerUser = async (
+  email: string,
+  password: string,
+  name: string
+): Promise<void> => {
+  const response = await fetch(`${API_URL}/api/register/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email,
+      password,
+      name,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Registration failed: ${response.status}`);
   }
-`;
+};
 
-// GraphQL mutation for biometric authentication
-// const BIOMETRIC_AUTH_MUTATION = gql`
-//   mutation BiometricAuth($input: UserSignInWithBiometricInput!) {
-//     signInWithBiometric(input: $input) {
-//       accessToken
-//       refreshToken
-//     }
-//   }
-// `;
+const getCurrentUser = async (accessToken: string): Promise<UserData> => {
+  const response = await apiGet(USER_URL);
+
+  if (!response.ok) {
+    throw new Error(`Failed to get user data: ${response.status}`);
+  }
+
+  return response.json();
+};
 
 // Auth provider component
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -81,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Check if the user is authenticated
   const isAuthenticated = !!user;
 
-  // Set up navigation callback for Apollo client
+  // Set up navigation callback for API client
   useEffect(() => {
     const navigateToLogin = () => {
       console.log("Token refresh failed, navigating to login");
@@ -106,28 +125,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const response = await client.query({
-        query: GET_USER_QUERY,
-        context: {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
+      const userData = await getCurrentUser(token);
+      await storeUserData(userData);
+      const deviceData = await getDeviceData();
+      await storeDeviceMetadata({
+        hasBiometricEnabled: deviceData.isBiometricAvailable,
+        userNif: userData.nif,
       });
-
-      if (response.data.currentUser) {
-        await storeUserData(response.data.currentUser);
-        const deviceData = await getDeviceData();
-        await storeDeviceMetadata({
-          hasBiometricEnabled: deviceData.isBiometricAvailable,
-          userNif: response.data.currentUser.nif,
-        });
-        setUser(response.data.currentUser);
-      } else {
-        // Token is invalid or expired
-        await clearAuthData();
-        setUser(null);
-      }
+      setUser(userData);
     } catch {
       // Clear auth data on error
       await clearAuthData();
@@ -160,38 +165,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [isAuthenticated, segments, isLoading, router]);
 
   // Login function
-  const login = async (email: string, pin: string) => {
+  const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
 
-      const response = await client.mutate({
-        mutation: SIGN_IN_MUTATION,
-        variables: { input: { email, password: pin } },
-      });
+      const tokenData = await loginUser(email, password);
 
-      const { accessToken, refreshToken } = response.data.signIn;
+      // Store tokens
+      await storeAccessToken(tokenData.access);
+      await storeRefreshToken(tokenData.refresh);
 
-      // Store tokens and user data
-      await storeAccessToken(accessToken);
-      await storeRefreshToken(refreshToken);
+      // Get user data
+      const userData = await getCurrentUser(tokenData.access);
+      await storeUserData(userData);
 
-      const usrResp = await client.query({
-        query: GET_USER_QUERY,
-        context: {
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-          },
-        },
-      });
-
-      // const deviceData = await getDeviceData();
-      await storeUserData(usrResp.data.currentUser);
-      // await storeDeviceMetadata({
-      //   hasBiometricEnabled: deviceData.isBiometricAvailable,
-      //   userNif: usrResp.data.currentUser.nif,
-      // });
       // Update state
-      setUser(usrResp.data.currentUser);
+      setUser(userData);
     } catch (error) {
       throw error;
     } finally {
@@ -199,85 +188,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // const biometricLogin = async (): Promise<void> => {
-  //   const compatible = await LocalAuthentication.hasHardwareAsync();
-  //   const enrolled = await LocalAuthentication.isEnrolledAsync();
-
-  //   if (!compatible || !enrolled) {
-  //     console.warn("Biometric authentication not available");
-  //     return;
-  //   }
-
-  //   // First, authenticate with device biometrics
-  //   const result = await LocalAuthentication.authenticateAsync({
-  //     promptMessage: "Authenticate to access your account",
-  //     fallbackLabel: "Use passcode",
-  //     disableDeviceFallback: false,
-  //   });
-
-  //   if (!result.success) {
-  //     return;
-  //   }
-
-  //   // Get current device data
-  //   const deviceData = await getDeviceData();
-
-  //   // After successful biometric authentication, get tokens from backend
-  //   const response = await client.mutate({
-  //     mutation: BIOMETRIC_AUTH_MUTATION,
-  //     variables: {
-  //       input: {
-  //         deviceId: deviceData.deviceId,
-  //         deviceName: deviceData.deviceName,
-  //         deviceType: deviceData.deviceType,
-  //         biometricType: deviceData.biometricType,
-  //       },
-  //     },
-  //   });
-
-  //   const { accessToken, refreshToken } = response.data.signInWithBiometric;
-
-  //   const usrResp = await client.query({
-  //     query: GET_USER_QUERY,
-  //     context: {
-  //       headers: {
-  //         authorization: `Bearer ${accessToken}`,
-  //       },
-  //     },
-  //   });
-
-  //   // Store the tokens and user data
-  //   await storeAccessToken(accessToken);
-  //   await storeRefreshToken(refreshToken);
-  //   await storeUserData(usrResp.data.currentUser);
-  //   setUser(usrResp.data.currentUser);
-  // };
-
   // Register function
-  const register = async (email: string, pin: string, name: string) => {
-    // const deviceData = await getDeviceData();
-
+  const register = async (email: string, password: string, name: string) => {
     try {
       setIsLoading(true);
-
-      const response = await client.mutate({
-        mutation: SIGN_UP_MUTATION,
-        variables: {
-          input: {
-            email,
-            password: pin,
-            name,
-            isAdmin: false,
-          },
-        },
-      });
-
-      if (!response.data.signUp.success) {
-        console.error("Register error:", response.data.signUp.message);
-      }
+      await registerUser(email, password, name);
     } catch (error) {
-      console.error("Register unknown error:", error);
-      console.log(error);
+      console.error("Register error:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }

@@ -106,8 +106,8 @@ const ButtonComponent = forwardRef<View, ButtonProps>((props, ref) => {
         />
       ) : (
         <View style={styles.contentContainer}>
-          {children}
           {title && <Text style={getTextStyle()}>{title}</Text>}
+          {children}
         </View>
       )}
     </TouchableOpacity>
@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    gap: 8,
   },
   // Variants
   primaryButton: {
