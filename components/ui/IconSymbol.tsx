@@ -18,6 +18,10 @@ const MAPPING = {
   "gearshape.fill": "settings",
   "shippingbox.fill": "inventory",
   "person.fill": "person",
+  "tray.and.arrow.down": "inbox",
+  "arrow.clockwise": "refresh",
+  "checkmark.circle": "check-circle",
+  "exclamationmark.triangle": "warning",
 } as Partial<
   Record<
     import("expo-symbols").SymbolViewProps["name"] | "truck",

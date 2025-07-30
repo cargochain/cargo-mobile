@@ -93,7 +93,14 @@
         "dashboard": "Painel",
         "recentActivity": "Atividade Recente",
         "description": "Gerencie suas remessas e clientes aqui.",
-        "notifications": "Notificações"
+        "notifications": "Notificações",
+        "analytics": {
+            "title": "Estatísticas do Motorista",
+            "totalAssigned": "Total Atribuído",
+            "totalInProgress": "Em Andamento",
+            "totalCompleted": "Concluído",
+            "errorLoading": "Erro ao carregar estatísticas"
+        }
     },
     "shipments": {
         "title": "Remessas",

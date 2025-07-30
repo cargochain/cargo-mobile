@@ -82,7 +82,14 @@
         "dashboard": "Panel de Control",
         "recentActivity": "Actividad Reciente",
         "description": "Gestione sus envíos y clientes aquí.",
-        "notifications": "Notificaciones"
+        "notifications": "Notificaciones",
+        "analytics": {
+            "title": "Estadísticas del Conductor",
+            "totalAssigned": "Total Asignados",
+            "totalInProgress": "En Progreso",
+            "totalCompleted": "Completados",
+            "errorLoading": "Error al cargar estadísticas"
+        }
     },
     "shipments": {
         "title": "Envíos",

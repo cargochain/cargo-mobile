@@ -95,7 +95,14 @@
         "dashboard": "Dashboard",
         "recentActivity": "Recent Activity",
         "description": "Manage your shipments and clients here.",
-        "notifications": "Notifications"
+        "notifications": "Notifications",
+        "analytics": {
+            "title": "Driver Statistics",
+            "totalAssigned": "Total Assigned",
+            "totalInProgress": "In Progress",
+            "totalCompleted": "Completed",
+            "errorLoading": "Error loading statistics"
+        }
     },
     "shipments": {
         "title": "Shipments",

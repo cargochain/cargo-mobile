@@ -52,7 +52,7 @@ export interface paths {
         /** @description Viewset for customer companies. */
         get: operations["customer_companies_list"];
         put?: never;
-        /** @description Viewset for customer companies. */
+        /** @description Create a customer company. */
         post: operations["customer_companies_create"];
         delete?: never;
         options?: never;
@@ -69,7 +69,7 @@ export interface paths {
         };
         /** @description Viewset for customer companies. */
         get: operations["customer_companies_retrieve"];
-        /** @description Viewset for customer companies. */
+        /** @description Update a customer company. */
         put: operations["customer_companies_update"];
         post?: never;
         /** @description Viewset for customer companies. */
@@ -244,6 +244,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/shipments/driver-statistics/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Get driver shipment statistics including total assigned, in progress, and completed. */
+        get: operations["shipments_driver_statistics_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/token/": {
         parameters: {
             query?: never;
@@ -404,7 +421,13 @@ export interface components {
             readonly updated_at: string;
             name: string;
             created_by: number;
-            updated_by: number;
+            readonly updated_by: number;
+        };
+        /** @description Serializer for driver shipment statistics. */
+        DriverStatistics: {
+            readonly total_assigned: number;
+            readonly total_in_progress: number;
+            readonly total_completed: number;
         };
         /** @description Serializer for reading attachments. */
         ListAttachment: {
@@ -426,6 +449,21 @@ export interface components {
          * @enum {string}
          */
         MediaTypeEnum: "PHOTO" | "DOCUMENT" | "OTHER";
+        PaginatedCustomerCompanyList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["CustomerCompany"][];
+        };
         PaginatedListAttachmentList: {
             /** @example 123 */
             count: number;
@@ -509,7 +547,7 @@ export interface components {
             readonly updated_at?: string;
             name?: string;
             created_by?: number;
-            updated_by?: number;
+            readonly updated_by?: number;
         };
         /** @description Serializer for shipments. */
         PatchedShipment: {
@@ -552,6 +590,8 @@ export interface components {
             username: string;
             /** @description Get the name of the user. */
             readonly name: string;
+            /** @description Get the is_driver of the user. */
+            readonly is_driver: boolean;
         };
         /** @description Serializer for shipments. */
         Shipment: {
@@ -780,7 +820,12 @@ export interface operations {
     };
     customer_companies_list: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description A page number within the paginated result set. */
+                page?: number;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -792,7 +837,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CustomerCompany"][];
+                    "application/json": components["schemas"]["PaginatedCustomerCompanyList"];
                 };
             };
         };
@@ -1373,6 +1418,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PaginatedShipmentReportList"];
+                };
+            };
+        };
+    };
+    shipments_driver_statistics_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DriverStatistics"];
                 };
             };
         };

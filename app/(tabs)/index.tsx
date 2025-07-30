@@ -1,10 +1,18 @@
-import { SafeAreaView, StyleSheet, View, Text, Platform } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Text,
+  Platform,
+  ScrollView,
+} from "react-native";
 
 import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemedText } from "@/components/ThemedText";
+import { AnalyticsCards } from "@/components/AnalyticsCards";
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -26,9 +34,9 @@ export default function HomeScreen() {
             <Text style={styles.headerSubtitle}>{t("home.description")}</Text>
           </View>
         </View>
-        <View style={styles.content}>
-          <ThemedText type="subtitle">{t("home.welcome")}</ThemedText>
-        </View>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <AnalyticsCards />
+        </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -85,6 +93,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light.secondary,
     padding: 20,
+  },
+  welcomeText: {
+    marginBottom: 24,
   },
   error: {
     color: Colors.light.error,
