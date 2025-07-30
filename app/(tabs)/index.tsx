@@ -11,7 +11,6 @@ import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { ThemedText } from "@/components/ThemedText";
 import { AnalyticsCards } from "@/components/AnalyticsCards";
 
 export default function HomeScreen() {
