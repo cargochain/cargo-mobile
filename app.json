@@ -2,7 +2,7 @@
   "expo": {
     "name": "Cargo",
     "slug": "cargo",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/cargo-logo.png",
     "scheme": "cargo",
