@@ -14,22 +14,9 @@ import { useTranslation } from "react-i18next";
 import { Colors } from "@/constants/Colors";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import useSWR from "swr";
-import { getAccessToken } from "@/services/secureStorage";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { components } from "@/lib/rest-api.types";
-
-const fetcher = async (url: string) => {
-  const token = await getAccessToken();
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (response.status === 401) {
-    console.log("401");
-  }
-  return response.json();
-};
+import { fetcher } from "@/shared";
 
 export default function ShipmentsScreen() {
   const { t } = useTranslation();

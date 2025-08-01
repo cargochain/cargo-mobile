@@ -48,3 +48,31 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+```mermaid
+
+sequenceDiagram
+    participant App as "Mobile App"
+    participant API as "API Endpoint"
+    participant Auth as "Auth Service"
+    participant RefreshAPI as "Token Refresh API"
+    
+    App->>API: Request with Access Token
+    API-->>App: 401 Unauthorized
+    
+    App->>Auth: refreshTokenAndRetry()
+    Auth->>RefreshAPI: POST /api/v1/token/refresh/<br/>{ refresh: "token" }
+    
+    alt Refresh Token Valid
+        RefreshAPI-->>Auth: 200 OK<br/>{ access: "new_token", refresh: "new_refresh" }
+        Auth->>Auth: Store new tokens
+        Auth-->>App: Return new access token
+        App->>API: Retry original request<br/>with new access token
+        API-->>App: 200 OK + Data
+    else Refresh Token Invalid/Expired
+        RefreshAPI-->>Auth: 401 Unauthorized<br/>{"detail": "Given token not valid",<br/>"code": "token_not_valid"}
+        Auth->>Auth: clearAuthData()
+        Auth->>App: navigationCallback()
+        App->>App: Navigate to Login Screen
+    end
+```

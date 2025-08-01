@@ -1,3 +1,4 @@
+import { components } from "@/lib/rest-api.types";
 import {
   getAccessToken,
   getRefreshToken,
@@ -7,7 +8,7 @@ import {
 } from "./secureStorage";
 
 const API_URL = `${process.env.EXPO_PUBLIC_API_URL}`;
-const TOKEN_URL = `${API_URL}/api/token/`;
+const TOKEN_REFRESH_URL = `${API_URL}/api/v1/token/refresh/`;
 
 // Navigation callback for handling auth failures
 let navigationCallback: (() => void) | null = null;
@@ -17,12 +18,23 @@ export const setNavigationCallback = (callback: (() => void) | null) => {
   navigationCallback = callback;
 };
 
+// Interface for token refresh error response
+interface TokenRefreshError {
+  detail: string;
+  code: string;
+  messages: {
+    token_class: string;
+    token_type: string;
+    message: string;
+  }[];
+}
+
 // Function to refresh JWT token using REST API
 const refreshJWTToken = async (
   refreshToken: string
 ): Promise<{ access: string; refresh: string } | null> => {
   try {
-    const response = await fetch(TOKEN_URL, {
+    const response = await fetch(TOKEN_REFRESH_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,10 +45,31 @@ const refreshJWTToken = async (
     });
 
     if (!response.ok) {
+      // Handle specific 401 case when refresh token is invalid
+      if (response.status === 401) {
+        try {
+          const errorData: TokenRefreshError = await response.json();
+          console.error("Refresh token expired or invalid:", errorData);
+
+          // Check if it's specifically a token expiration/invalid error
+          if (errorData.code === "token_not_valid") {
+            console.log("Refresh token is no longer valid, clearing auth data");
+            return null; // This will trigger auth data clearing in the calling function
+          }
+        } catch (parseError) {
+          console.error(
+            "Failed to parse refresh token error response:",
+            parseError
+          );
+        }
+        return null;
+      }
+
       throw new Error(`Token refresh failed: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data =
+      (await response.json()) as components["schemas"]["TokenRefresh"];
     return {
       access: data.access,
       refresh: data.refresh,
@@ -130,6 +163,7 @@ export const apiRequest = async (
 
   // If unauthorized, try to refresh token and retry
   if (response.status === 401) {
+    console.log("🛠️ Refreshing token...");
     const newToken = await refreshTokenAndRetry();
     if (newToken) {
       // Retry the request with the new token
@@ -138,6 +172,12 @@ export const apiRequest = async (
         ...options,
         headers,
       });
+    } else {
+      console.log("🛠️ Failed to refresh token");
+      await clearAuthData();
+      if (navigationCallback) {
+        navigationCallback();
+      }
     }
   }
 

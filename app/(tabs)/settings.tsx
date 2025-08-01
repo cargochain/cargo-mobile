@@ -14,21 +14,7 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import { changeLanguage, getAvailableLanguages } from "@/i18n";
 import { useAuth } from "@/services/authContext";
 import { FontAwesome } from "@expo/vector-icons";
-import { getAccessToken } from "@/services/secureStorage";
-
-const fetcher = async (url: string, options: RequestInit) => {
-  const token = await getAccessToken();
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    ...options,
-  });
-  if (response.status === 401) {
-    console.log("401");
-  }
-  return response.json();
-};
+import { apiDelete } from "@/services/apiClient";
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
@@ -53,14 +39,10 @@ export default function SettingsScreen() {
   };
 
   const deleteAccount = async () => {
-    const response = await fetcher(
-      `${process.env.EXPO_PUBLIC_API_URL}/api/v1/users/delete-account/`,
-      {
-        method: "DELETE",
-      }
+    const response = await apiDelete(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/v1/users/delete-account/`
     );
-    console.log(response);
-    if (response.status === 200) {
+    if (response.ok) {
       await logout();
     }
   };

@@ -18,17 +18,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { components } from "@/lib/rest-api.types";
 import useSWR from "swr";
-import { getAccessToken } from "@/services/secureStorage";
-
-const fetcher = async (url: string) => {
-  const token = await getAccessToken();
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return response.json();
-};
+import { fetcher } from "@/shared";
 
 export default function ShipmentDetailsScreen() {
   const { t } = useTranslation();
@@ -111,8 +101,8 @@ export default function ShipmentDetailsScreen() {
         <View style={styles.photos}>
           <FlatList
             data={attachments}
-            renderItem={({ item }) => (
-              <View style={styles.photoItem} key={item.file}>
+            renderItem={({ item, index }) => (
+              <View style={styles.photoItem} key={index}>
                 <Image
                   source={{ uri: item.file }}
                   style={styles.photoItemImage}
@@ -120,7 +110,7 @@ export default function ShipmentDetailsScreen() {
               </View>
             )}
             numColumns={3}
-            keyExtractor={(item) => item.file}
+            keyExtractor={(item, index) => index.toString()}
           />
         </View>
       </View>

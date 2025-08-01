@@ -7,7 +7,6 @@ import {
   Image,
   Platform,
   Pressable,
-  FlatList,
   ActivityIndicator,
   Alert,
 } from "react-native";
